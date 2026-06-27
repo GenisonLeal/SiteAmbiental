@@ -17,7 +17,7 @@ class CobrancaBase(BaseModel):
     valor: Decimal = Field(..., max_digits=10, decimal_places=2)
     data_vencimento: date
     data_pagamento: date | None = None
-    status_pagamento: StatusCobranca = StatusCobranca.pendente
+    status: StatusCobranca = StatusCobranca.pendente
     forma_pagamento: str | None = Field(None, max_length=50)
 
 
@@ -31,7 +31,7 @@ class CobrancaUpdate(BaseModel):
     valor: Decimal | None = Field(None, max_digits=10, decimal_places=2)
     data_vencimento: date | None = None
     data_pagamento: date | None = None
-    status_pagamento: StatusCobranca | None = None
+    status: StatusCobranca | None = None
     forma_pagamento: str | None = Field(None, max_length=50)
 
 

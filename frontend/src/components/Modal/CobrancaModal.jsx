@@ -8,7 +8,7 @@ export default function CobrancaModal({ isOpen, onClose, cobrancaAtual, onSaveSu
     valor: '',
     data_vencimento: '',
     data_pagamento: '',
-    status_pagamento: 'pendente',
+    status: 'pendente',
     forma_pagamento: ''
   });
   
@@ -40,7 +40,7 @@ export default function CobrancaModal({ isOpen, onClose, cobrancaAtual, onSaveSu
           valor: cobrancaAtual.valor || '',
           data_vencimento: cobrancaAtual.data_vencimento || '',
           data_pagamento: cobrancaAtual.data_pagamento || '',
-          status_pagamento: cobrancaAtual.status_pagamento || 'pendente',
+          status: cobrancaAtual.status || 'pendente',
           forma_pagamento: cobrancaAtual.forma_pagamento || ''
         });
       } else {
@@ -49,7 +49,7 @@ export default function CobrancaModal({ isOpen, onClose, cobrancaAtual, onSaveSu
           valor: '',
           data_vencimento: '',
           data_pagamento: '',
-          status_pagamento: 'pendente',
+          status: 'pendente',
           forma_pagamento: ''
         });
       }
@@ -165,7 +165,7 @@ export default function CobrancaModal({ isOpen, onClose, cobrancaAtual, onSaveSu
               <div className="form-group">
                 <label className="form-label">Status do Pagamento *</label>
                 <select 
-                  name="status_pagamento" value={formData.status_pagamento} onChange={handleChange}
+                  name="status" value={formData.status} onChange={handleChange}
                   className="form-input" required 
                 >
                   <option value="pendente">⏳ Pendente</option>

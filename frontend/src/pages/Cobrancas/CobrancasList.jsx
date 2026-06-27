@@ -110,8 +110,8 @@ export default function CobrancasList() {
                       {formatarMoeda(c.valor)}
                     </td>
                     <td>
-                      <span className={`status-badge ${c.status_pagamento}`}>
-                        {c.status_pagamento}
+                      <span className={`status-badge ${c.status}`}>
+                        {c.status}
                       </span>
                     </td>
                     <td style={{ color: 'var(--color-text-muted)' }}>
