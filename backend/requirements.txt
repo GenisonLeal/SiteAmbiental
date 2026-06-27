@@ -1,0 +1,41 @@
+# ── Web Framework ──────────────────────────────────────────
+fastapi==0.115.14
+uvicorn[standard]==0.34.3
+
+# ── Banco de Dados ─────────────────────────────────────────
+sqlalchemy[asyncio]==2.0.41
+asyncpg==0.30.0
+alembic==1.16.2
+
+# ── Validação e Configurações ──────────────────────────────
+pydantic==2.11.7
+pydantic-settings==2.9.1
+
+# ── Autenticação ───────────────────────────────────────────
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.20
+
+# ── E-mail (SMTP) ──────────────────────────────────────────
+# smtplib faz parte da stdlib Python - sem necessidade de instalação
+
+# ── PDF ────────────────────────────────────────────────────
+reportlab==4.4.1
+
+# ── Tarefas Assíncronas ────────────────────────────────────
+celery[redis]==5.5.3
+redis==6.2.0
+
+# ── Storage (Supabase) ─────────────────────────────────────
+supabase==2.15.3
+
+# ── Rate Limiting ──────────────────────────────────────────
+slowapi==0.1.9
+
+# ── Utilitários ────────────────────────────────────────────
+python-dotenv==1.1.1
+httpx==0.28.1
+
+# ── Dev / Testes ───────────────────────────────────────────
+pytest==8.4.1
+pytest-asyncio==1.0.0
