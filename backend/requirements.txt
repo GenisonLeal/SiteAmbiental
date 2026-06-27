@@ -16,9 +16,6 @@ python-jose[cryptography]==3.5.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.20
 
-# ── E-mail (SMTP) ──────────────────────────────────────────
-# smtplib faz parte da stdlib Python - sem necessidade de instalação
-
 # ── PDF ────────────────────────────────────────────────────
 reportlab==4.4.1
 
