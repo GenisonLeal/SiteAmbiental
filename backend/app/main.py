@@ -42,8 +42,9 @@ async def root():
 # Quando implementarmos as rotas de clientes, usuários, etc.,
 # usaremos app.include_router(clientes.router) aqui.
 
-from app.routers import auth, clientes, servicos
+from app.routers import auth, clientes, servicos, visitas
 
 app.include_router(auth.router)
 app.include_router(clientes.router)
 app.include_router(servicos.router)
+app.include_router(visitas.router)
