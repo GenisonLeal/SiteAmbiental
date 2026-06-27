@@ -31,3 +31,27 @@ dist-ssr
 .env.production.local
 .vite
 .eslintcache
+
+# Plano de implementação (uso pessoal, não versionar)
+PLANO_IMPLEMENTACAO.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+venv/
+.venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# Alembic
+alembic/versions/__pycache__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# PDF gerados localmente
+*.pdf
