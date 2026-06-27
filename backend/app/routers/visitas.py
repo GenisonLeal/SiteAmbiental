@@ -53,7 +53,13 @@ async def list_visitas(
     limit: int = 100
 ):
     """Lista as visitas agendadas e realizadas."""
-    stmt = select(Visita).offset(skip).limit(limit).order_by(Visita.data_agendada.asc())
+    stmt = (
+        select(Visita)
+        .options(selectinload(Visita.cliente), selectinload(Visita.servico))
+        .offset(skip)
+        .limit(limit)
+        .order_by(Visita.data_agendada.asc())
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 

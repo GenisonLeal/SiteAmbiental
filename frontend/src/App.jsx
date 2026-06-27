@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import LandingHome from './pages/Landing/LandingHome'
 import Login from './pages/Login/login'
 import ProtectedRoute from './routes/ProtectedRoute'
 import DashboardLayout from './components/Layout/DashboardLayout'
@@ -12,7 +13,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Rota Pública (Vitrine) */}
+        <Route path="/" element={<LandingHome />} />
+        
+        {/* Rota de Autenticação */}
         <Route path="/login" element={<Login />} />
         
         {/* Agrupamento de Rotas Privadas */}

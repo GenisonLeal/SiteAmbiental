@@ -1,7 +1,57 @@
-import { Users, Briefcase, CalendarCheck, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, Briefcase, CalendarCheck, TrendingUp, Loader2 } from 'lucide-react';
+import api from '../../services/api';
 import './DashboardHome.css';
 
 export default function DashboardHome() {
+  const [metrics, setMetrics] = useState({
+    totalClientes: 0,
+    servicosAtivos: 0,
+    visitasPendentes: 0,
+    receitaTotal: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const [resClientes, resServicos, resVisitas, resCobrancas] = await Promise.all([
+          api.get('/api/clientes/'),
+          api.get('/api/servicos/'),
+          api.get('/api/visitas/'),
+          api.get('/api/cobrancas/')
+        ]);
+
+        // Calcula receita com base apenas em cobranças pagas
+        const cobrancasPagas = resCobrancas.data.filter(c => c.status === 'pago');
+        const receita = cobrancasPagas.reduce((acc, curr) => acc + parseFloat(curr.valor), 0);
+
+        // Calcula visitas agendadas/pendentes
+        const visitasAgendadas = resVisitas.data.filter(v => v.status === 'agendada');
+
+        // Conta serviços ativos
+        const ativos = resServicos.data.filter(s => s.ativo);
+
+        setMetrics({
+          totalClientes: resClientes.data.length,
+          servicosAtivos: ativos.length,
+          visitasPendentes: visitasAgendadas.length,
+          receitaTotal: receita
+        });
+      } catch (err) {
+        console.error("Erro ao carregar métricas do dashboard:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMetrics();
+  }, []);
+
+  const formatarMoeda = (valor) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+  };
+
   return (
     <div className="home-container">
       <div>
@@ -9,40 +59,45 @@ export default function DashboardHome() {
         <p className="home-subtitle">Acompanhe as métricas da Protecta Dedetização</p>
       </div>
 
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon"><Users size={28} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Total de Clientes</span>
-            {/* Depois vamos puxar isso do Backend! */}
-            <span className="stat-value">0</span>
-          </div>
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem', color: 'var(--color-primary)' }}>
+          <Loader2 size={40} className="spinner" />
         </div>
+      ) : (
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-icon"><Users size={28} /></div>
+            <div className="stat-info">
+              <span className="stat-label">Total de Clientes</span>
+              <span className="stat-value">{metrics.totalClientes}</span>
+            </div>
+          </div>
 
-        <div className="stat-card">
-          <div className="stat-icon"><Briefcase size={28} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Serviços Ativos</span>
-            <span className="stat-value">0</span>
+          <div className="stat-card">
+            <div className="stat-icon"><Briefcase size={28} /></div>
+            <div className="stat-info">
+              <span className="stat-label">Serviços Ativos</span>
+              <span className="stat-value">{metrics.servicosAtivos}</span>
+            </div>
           </div>
-        </div>
 
-        <div className="stat-card">
-          <div className="stat-icon"><CalendarCheck size={28} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Visitas Hoje</span>
-            <span className="stat-value">0</span>
+          <div className="stat-card">
+            <div className="stat-icon"><CalendarCheck size={28} /></div>
+            <div className="stat-info">
+              <span className="stat-label">Visitas Pendentes</span>
+              <span className="stat-value">{metrics.visitasPendentes}</span>
+            </div>
           </div>
-        </div>
 
-        <div className="stat-card">
-          <div className="stat-icon"><TrendingUp size={28} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Receita do Mês</span>
-            <span className="stat-value">R$ 0,00</span>
+          <div className="stat-card">
+            <div className="stat-icon"><TrendingUp size={28} /></div>
+            <div className="stat-info">
+              <span className="stat-label">Receita (Pagos)</span>
+              <span className="stat-value">{formatarMoeda(metrics.receitaTotal)}</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

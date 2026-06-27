@@ -35,11 +35,31 @@ class VisitaUpdate(BaseModel):
     observacoes: str | None = None
 
 
+class ClienteRef(BaseModel):
+    id: UUID
+    nome: str
+    cpf_cnpj: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ServicoRef(BaseModel):
+    id: UUID
+    nome: str
+    preco_base: object
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class VisitaResponse(VisitaBase):
     """Schema de RESPOSTA."""
     id: UUID
     certificado_url: str | None = None
     criado_em: datetime
     atualizado_em: datetime
+    
+    # Nested relationships para exibir na tabela do Frontend
+    cliente: ClienteRef | None = None
+    servico: ServicoRef | None = None
 
     model_config = ConfigDict(from_attributes=True)

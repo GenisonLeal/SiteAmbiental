@@ -75,10 +75,10 @@ export default function ClientesList() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>CPF/CNPJ</th>
-                <th>Telefone</th>
+                <th>Nome / Empresa</th>
+                <th>CPF / CNPJ</th>
+                <th>Contato</th>
+                <th>Endereço</th>
                 <th style={{ textAlign: 'right' }}>Ações</th>
               </tr>
             </thead>
@@ -90,18 +90,23 @@ export default function ClientesList() {
                   </td>
                 </tr>
               ) : (
-                clientes.map((c) => (
-                  <tr key={c.id}>
-                    <td style={{ fontWeight: 500 }}>{c.nome}</td>
-                    <td>{c.email}</td>
-                    <td>{c.cpf_cnpj}</td>
-                    <td>{c.telefone || '-'}</td>
+                clientes.map((cliente) => (
+                  <tr key={cliente.id}>
+                    <td style={{ fontWeight: 500 }}>{cliente.nome}</td>
+                    <td style={{ color: 'var(--color-text-muted)' }}>{cliente.cpf_cnpj}</td>
                     <td>
-                      <div className="actions-cell" style={{ justifyContent: 'flex-end' }}>
-                        <button className="btn-icon edit" onClick={() => handleEditar(c)} title="Editar">
+                      <div>{cliente.telefone}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{cliente.email}</div>
+                    </td>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                      {cliente.endereco?.logradouro ? `${cliente.endereco.logradouro}, ${cliente.endereco.numero || 'S/N'} - ${cliente.endereco.cidade || ''}` : '-'}
+                    </td>
+                    <td>
+                      <div className="actions-cell">
+                        <button className="btn-icon edit" onClick={() => handleEditar(cliente)}>
                           <Edit2 size={18} />
                         </button>
-                        <button className="btn-icon delete" onClick={() => handleDelete(c.id, c.nome)} title="Excluir">
+                        <button className="btn-icon delete" onClick={() => handleDelete(cliente.id, cliente.nome)}>
                           <Trash2 size={18} />
                         </button>
                       </div>
