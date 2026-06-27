@@ -1,0 +1,47 @@
+/* 
+ * Variáveis Globais CSS - SiteAmbiental Protecta
+ * Aqui nós espelhamos os valores do utils/colors.js usando variáveis CSS nativas.
+ * Para usar em qualquer arquivo CSS (ex: Login.css):
+ * color: var(--color-primary);
+ */
+
+ :root {
+  /* Tons Principais (Verde Natureza) */
+  --color-primary: #2e7d32;
+  --color-primary-hover: #1b5e20;
+  --color-primary-light: #a5d6a7;
+
+  /* Tons de Sucesso, Alerta e Erro */
+  --color-success: #388e3c;
+  --color-warning: #fbc02d;
+  --color-error: #d32f2f;
+
+  /* Tons Neutros (Textos, Bordas e Fundos) */
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text-main: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+
+  /* Variáveis Utilitárias Comuns */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Reset básico universal para dar uma base limpa ao nosso Vanilla CSS */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-main);
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
