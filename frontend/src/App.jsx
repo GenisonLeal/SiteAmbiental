@@ -6,6 +6,7 @@ import DashboardHome from './pages/Dashboard/DashboardHome'
 import ClientesList from './pages/Clientes/ClientesList'
 import ServicosList from './pages/Servicos/ServicosList'
 import VisitasList from './pages/Visitas/VisitasList'
+import CobrancasList from './pages/Cobrancas/CobrancasList'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="clientes" element={<ClientesList />} />
             <Route path="servicos" element={<ServicosList />} />
             <Route path="visitas" element={<VisitasList />} />
+            <Route path="cobrancas" element={<CobrancasList />} />
           </Route>
         </Route>
         
