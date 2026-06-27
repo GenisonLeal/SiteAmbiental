@@ -127,7 +127,7 @@ export default function VisitasList() {
               ) : (
                 visitas.map((v) => (
                   <tr key={v.id}>
-                    <td style={{ fontWeight: 500 }}>{formatarData(v.data_visita)}</td>
+                    <td style={{ fontWeight: 500 }}>{formatarData(v.data_agendada)}</td>
                     <td>{v.cliente?.nome || 'Desconhecido'}</td>
                     <td>{v.servico?.nome || 'Desconhecido'}</td>
                     <td>

@@ -6,20 +6,17 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
   const [formData, setFormData] = useState({
     cliente_id: '',
     servico_id: '',
-    data_visita: '',
+    data_agendada: '',
     status: 'agendada',
-    garantia_dias: 0,
     observacoes: ''
   });
   
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   
-  // Listas para popular os Selects (Dropdowns)
   const [clientes, setClientes] = useState([]);
   const [servicos, setServicos] = useState([]);
 
-  // Busca os dados relacionais assim que o componente for "montado" no navegador
   useEffect(() => {
     const carregarDependencias = async () => {
       try {
@@ -28,7 +25,6 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
           api.get('/api/servicos/')
         ]);
         setClientes(resClientes.data);
-        // Filtra apenas os serviços que estão ativos para aparecerem no Select
         setServicos(resServicos.data.filter(s => s.ativo));
       } catch (err) {
         console.error("Erro ao carregar selects:", err);
@@ -41,26 +37,23 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
     if (isOpen) {
       setErro('');
       if (visitaAtual) {
-        // Se estiver editando, precisamos formatar a data que vem do banco para o <input type="datetime-local">
-        const dataFormatada = visitaAtual.data_visita 
-          ? new Date(visitaAtual.data_visita).toISOString().slice(0, 16) 
+        const dataFormatada = visitaAtual.data_agendada 
+          ? new Date(visitaAtual.data_agendada).toISOString().slice(0, 16) 
           : '';
 
         setFormData({
           cliente_id: visitaAtual.cliente_id || '',
           servico_id: visitaAtual.servico_id || '',
-          data_visita: dataFormatada,
+          data_agendada: dataFormatada,
           status: visitaAtual.status || 'agendada',
-          garantia_dias: visitaAtual.garantia_dias || 0,
           observacoes: visitaAtual.observacoes || ''
         });
       } else {
         setFormData({
           cliente_id: '',
           servico_id: '',
-          data_visita: '',
+          data_agendada: '',
           status: 'agendada',
-          garantia_dias: 0,
           observacoes: ''
         });
       }
@@ -79,12 +72,9 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
     setErro('');
 
     try {
-      // Formata os tipos corretamente para o Pydantic do backend
       const payload = {
         ...formData,
-        garantia_dias: parseInt(formData.garantia_dias) || 0,
-        // O input datetime-local envia algo como "2023-10-15T14:30". Precisamos garantir formato ISO.
-        data_visita: new Date(formData.data_visita).toISOString()
+        data_agendada: new Date(formData.data_agendada).toISOString()
       };
 
       if (visitaAtual) {
@@ -98,7 +88,14 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
 
     } catch (error) {
       if (error.response?.data?.detail) {
-        setErro(error.response.data.detail);
+        // O FastAPI retorna um Array de objetos no detalhe do Erro 422
+        // Precisamos transformar isso numa String para o React não quebrar.
+        const detalhe = error.response.data.detail;
+        if (Array.isArray(detalhe)) {
+          setErro(detalhe.map(d => `${d.loc.join('.')}: ${d.msg}`).join(' | '));
+        } else {
+          setErro(detalhe);
+        }
       } else {
         setErro("Ocorreu um erro ao salvar a Ordem de Serviço.");
       }
@@ -121,7 +118,7 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
             
-            {erro && <div className="error-message">{erro}</div>}
+            {erro && <div className="error-message" style={{ color: 'red', fontWeight: 'bold' }}>{erro}</div>}
 
             <div className="form-group">
               <label className="form-label">Cliente *</label>
@@ -152,39 +149,22 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
             <div className="form-group">
               <label className="form-label">Data e Hora Agendada *</label>
               <input 
-                type="datetime-local" name="data_visita" 
-                value={formData.data_visita} onChange={handleChange}
+                type="datetime-local" name="data_agendada" 
+                value={formData.data_agendada} onChange={handleChange}
                 className="form-input" required 
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <div className="form-group">
-                <label className="form-label">Status da OS *</label>
-                <select 
-                  name="status" value={formData.status} onChange={handleChange}
-                  className="form-input" required 
-                >
-                  <option value="agendada">📅 Agendada</option>
-                  <option value="concluida">✅ Concluída</option>
-                  <option value="cancelada">❌ Cancelada</option>
-                </select>
-              </div>
-
-              {/* Implementação da "Open Question": Select de Garantias */}
-              <div className="form-group">
-                <label className="form-label">Tempo de Garantia *</label>
-                <select 
-                  name="garantia_dias" value={formData.garantia_dias} onChange={handleChange}
-                  className="form-input" required 
-                >
-                  <option value="0">Sem Garantia</option>
-                  <option value="30">30 Dias (1 Mês)</option>
-                  <option value="90">90 Dias (3 Meses)</option>
-                  <option value="180">180 Dias (6 Meses)</option>
-                  <option value="365">365 Dias (1 Ano)</option>
-                </select>
-              </div>
+            <div className="form-group">
+              <label className="form-label">Status da OS *</label>
+              <select 
+                name="status" value={formData.status} onChange={handleChange}
+                className="form-input" required 
+              >
+                <option value="agendada">📅 Agendada</option>
+                <option value="concluida">✅ Concluída</option>
+                <option value="cancelada">❌ Cancelada</option>
+              </select>
             </div>
 
             <div className="form-group">
