@@ -5,6 +5,7 @@ import DashboardLayout from './components/Layout/DashboardLayout'
 import DashboardHome from './pages/Dashboard/DashboardHome'
 import ClientesList from './pages/Clientes/ClientesList'
 import ServicosList from './pages/Servicos/ServicosList'
+import VisitasList from './pages/Visitas/VisitasList'
 
 function App() {
   return (
@@ -16,10 +17,10 @@ function App() {
         {/* Agrupamento de Rotas Privadas */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardLayout />}>
-            {/* O "index" significa que essa é a rota padrão quando acessamos /dashboard */}
             <Route index element={<DashboardHome />} />
             <Route path="clientes" element={<ClientesList />} />
             <Route path="servicos" element={<ServicosList />} />
+            <Route path="visitas" element={<VisitasList />} />
           </Route>
         </Route>
         
