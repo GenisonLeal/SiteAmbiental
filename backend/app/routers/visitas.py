@@ -102,3 +102,39 @@ async def delete_visita(
 
     await db.delete(visita)
     await db.commit()
+
+
+from fastapi.responses import Response
+from app.services.pdf_service import gerar_os_pdf
+
+
+@router.get("/{visita_id}/pdf", response_class=Response)
+async def download_visita_pdf(
+    visita_id: UUID,
+    db: Annotated[AsyncSession, Depends(get_db)]
+):
+    """Gera e retorna o PDF da Ordem de Serviço."""
+    # Precisamos carregar a Visita e juntar as informações do Cliente e Serviço associados a ela
+    # O selectinload faz o JOIN automático para não tomarmos erro de Lazy Loading
+    stmt = (
+        select(Visita)
+        .where(Visita.id == visita_id)
+        .options(selectinload(Visita.cliente), selectinload(Visita.servico))
+    )
+    result = await db.execute(stmt)
+    visita = result.scalar_one_or_none()
+
+    if not visita:
+        raise HTTPException(status_code=404, detail="Visita não encontrada")
+
+    # Gera o arquivo binário em memória
+    pdf_bytes = gerar_os_pdf(visita, visita.cliente, visita.servico)
+
+    # Devolve para o navegador informando que o conteúdo é um Arquivo PDF (não um JSON)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename=OS_Protecta_{visita.id}.pdf"
+        }
+    )
