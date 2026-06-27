@@ -4,6 +4,7 @@ import ProtectedRoute from './routes/ProtectedRoute'
 import DashboardLayout from './components/Layout/DashboardLayout'
 import DashboardHome from './pages/Dashboard/DashboardHome'
 import ClientesList from './pages/Clientes/ClientesList'
+import ServicosList from './pages/Servicos/ServicosList'
 
 function App() {
   return (
@@ -17,8 +18,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             {/* O "index" significa que essa é a rota padrão quando acessamos /dashboard */}
             <Route index element={<DashboardHome />} />
-            {/* Outras páginas virão aqui depois */}
             <Route path="clientes" element={<ClientesList />} />
+            <Route path="servicos" element={<ServicosList />} />
           </Route>
         </Route>
         
