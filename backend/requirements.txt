@@ -24,7 +24,7 @@ reportlab==4.4.1
 
 # ── Tarefas Assíncronas ────────────────────────────────────
 celery[redis]==5.5.3
-redis==6.2.0
+redis==5.2.1
 
 # ── Storage (Supabase) ─────────────────────────────────────
 supabase==2.15.3
