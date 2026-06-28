@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Leaf, LogOut, FileText, CalendarCheck } from 'lucide-react';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import './ClientPortal.css'; // Vamos criar este arquivo também
 
 export default function ClientPortalLayout() {

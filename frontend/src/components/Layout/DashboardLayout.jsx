@@ -8,7 +8,7 @@ import {
   LogOut,
   Leaf
 } from 'lucide-react';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import './DashboardLayout.css';
 
 export default function DashboardLayout() {
