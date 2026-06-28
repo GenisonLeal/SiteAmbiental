@@ -99,7 +99,7 @@ export default function ClientesList() {
                       <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{cliente.email}</div>
                     </td>
                     <td style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                      {cliente.endereco?.logradouro ? `${cliente.endereco.logradouro}, ${cliente.endereco.numero || 'S/N'} - ${cliente.endereco.cidade || ''}` : '-'}
+                      {cliente.endereco ? `${cliente.endereco} ${cliente.cidade ? '- ' + cliente.cidade : ''}` : '-'}
                     </td>
                     <td>
                       <div className="actions-cell">
