@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { Leaf, Bug, ShieldCheck, Phone, Mail, MapPin, Camera, Globe, MessageCircle, Ghost, Droplets } from 'lucide-react';
+import nossahistoriaImg from '../../assets/images/nossahistoria.png';
 import './Landing.css';
 
 // Componente Interativo de Partículas (Canvas)
@@ -172,9 +173,7 @@ export default function LandingHome() {
       {/* ── EMPRESA ── */}
       <section id="empresa" className="section">
         <div className="empresa-content">
-          <div className="empresa-image-placeholder">
-            {/* Em produção, aqui iria uma foto real da equipe ou do carro da empresa */}
-          </div>
+          <img src={nossahistoriaImg} alt="Nossa História - Protecta Ambiental" className="empresa-image" />
           <div className="empresa-text">
             <h2 className="section-title" style={{ textAlign: 'left' }}>Nossa História</h2>
             <p>
