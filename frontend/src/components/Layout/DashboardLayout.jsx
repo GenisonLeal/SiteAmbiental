@@ -8,15 +8,15 @@ import {
   LogOut,
   Leaf
 } from 'lucide-react';
+import { useAuth } from '../../../hooks/useAuth';
 import './DashboardLayout.css';
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    // Remove o token de acesso da memória do navegador
-    localStorage.removeItem('protecta_token');
-    // Chuta o usuário para a tela de login
+    logout();
     navigate('/login', { replace: true });
   };
 
@@ -71,8 +71,8 @@ export default function DashboardLayout() {
         <header className="topbar">
           <h1 className="topbar-title">Administração</h1>
           <div className="topbar-user">
-            <span>Administrador</span>
-            <div className="user-avatar">A</div>
+            <span>{user?.nome || 'Usuário'}</span>
+            <div className="user-avatar">{user?.nome?.charAt(0).toUpperCase() || 'U'}</div>
           </div>
         </header>
 

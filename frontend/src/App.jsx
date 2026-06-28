@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
 import LandingHome from './pages/Landing/LandingHome'
 import Login from './pages/Login/login'
 import ProtectedRoute from './routes/protectedRoute'
@@ -14,34 +15,36 @@ import ClientDashboard from './pages/ClientPortal/ClientDashboard'
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Rota Pública (Vitrine) */}
-        <Route path="/" element={<LandingHome />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Rota Pública (Vitrine) */}
+          <Route path="/" element={<LandingHome />} />
 
-        {/* Rota de Autenticação */}
-        <Route path="/login" element={<Login />} />
+          {/* Rota de Autenticação */}
+          <Route path="/login" element={<Login />} />
 
-        {/* Portal do Cliente (Somente Cliente final) */}
-        <Route element={<ProtectedRoute allowedRoles={['cliente']} />}>
-          <Route element={<ClientPortalLayout />}>
-            <Route path="/portal" element={<ClientDashboard />} />
+          {/* Portal do Cliente (Somente Cliente final) */}
+          <Route element={<ProtectedRoute allowedRoles={['cliente']} />}>
+            <Route element={<ClientPortalLayout />}>
+              <Route path="/portal" element={<ClientDashboard />} />
+            </Route>
           </Route>
-        </Route>
 
-        {/* Agrupamento de Rotas Privadas (Admin e Atendentes) */}
-        <Route element={<ProtectedRoute allowedRoles={['admin', 'atendente', 'tecnico']} />}>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<DashboardHome />} />
-            <Route path="clientes" element={<ClientesList />} />
-            <Route path="servicos" element={<ServicosList />} />
-            <Route path="visitas" element={<VisitasList />} />
-            <Route path="cobrancas" element={<CobrancasList />} />
+          {/* Agrupamento de Rotas Privadas (Admin e Atendentes) */}
+          <Route element={<ProtectedRoute allowedRoles={['admin', 'atendente', 'tecnico']} />}>
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<DashboardHome />} />
+              <Route path="clientes" element={<ClientesList />} />
+              <Route path="servicos" element={<ServicosList />} />
+              <Route path="visitas" element={<VisitasList />} />
+              <Route path="cobrancas" element={<CobrancasList />} />
+            </Route>
           </Route>
-        </Route>
 
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </Router>
+    </AuthProvider>
   )
 }
 

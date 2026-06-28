@@ -1,15 +1,15 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Leaf, LogOut, FileText, CalendarCheck } from 'lucide-react';
+import { useAuth } from '../../../hooks/useAuth';
 import './ClientPortal.css'; // Vamos criar este arquivo também
 
 export default function ClientPortalLayout() {
   const navigate = useNavigate();
-  const userName = localStorage.getItem('protecta_user_nome') || 'Cliente';
+  const { user, logout } = useAuth();
+  const userName = user?.nome || 'Cliente';
 
   const handleLogout = () => {
-    localStorage.removeItem('protecta_token');
-    localStorage.removeItem('protecta_role');
-    localStorage.removeItem('protecta_user_nome');
+    logout();
     navigate('/login');
   };
 

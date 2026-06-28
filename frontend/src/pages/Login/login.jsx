@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Leaf, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 import './login.css'; 
 
 export default function Login() {
@@ -10,6 +11,7 @@ export default function Login() {
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,25 +23,24 @@ export default function Login() {
       formData.append('username', email); 
       formData.append('password', senha);
 
-      const response = await axios.post('http://localhost:8000/api/auth/login', formData, {
+      const response = await api.post('/auth/login', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
 
       const token = response.data.access_token;
-      localStorage.setItem('protecta_token', token);
 
       // Busca o perfil do usuário para saber para onde direcioná-lo
-      const meResponse = await axios.get('http://localhost:8000/api/auth/me', {
+      const meResponse = await api.get('/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
-      const role = meResponse.data.role;
-      localStorage.setItem('protecta_role', role);
-      localStorage.setItem('protecta_user_nome', meResponse.data.nome);
+      const userData = meResponse.data;
+      
+      login(userData, token);
 
-      if (role === 'cliente') {
+      if (userData.role === 'cliente') {
         navigate('/portal');
       } else {
         navigate('/dashboard');
