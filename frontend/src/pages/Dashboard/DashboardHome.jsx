@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Users, Briefcase, CalendarCheck, TrendingUp, Loader2 } from 'lucide-react';
+import { Users, Briefcase, CalendarCheck, TrendingUp, AlertTriangle, CheckCircle, DollarSign, Loader2 } from 'lucide-react';
 import api from '../../services/api';
+import Card from '../../components/common/Card';
 import './DashboardHome.css';
 
 export default function DashboardHome() {
@@ -64,38 +65,31 @@ export default function DashboardHome() {
           <Loader2 size={40} className="spinner" />
         </div>
       ) : (
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon"><Users size={28} /></div>
-            <div className="stat-info">
-              <span className="stat-label">Total de Clientes</span>
-              <span className="stat-value">{metrics.totalClientes}</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-icon"><Briefcase size={28} /></div>
-            <div className="stat-info">
-              <span className="stat-label">Serviços Ativos</span>
-              <span className="stat-value">{metrics.servicosAtivos}</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-icon"><CalendarCheck size={28} /></div>
-            <div className="stat-info">
-              <span className="stat-label">Visitas Pendentes</span>
-              <span className="stat-value">{metrics.visitasPendentes}</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-icon"><TrendingUp size={28} /></div>
-            <div className="stat-info">
-              <span className="stat-label">Receita (Pagos)</span>
-              <span className="stat-value">{formatarMoeda(metrics.receitaTotal)}</span>
-            </div>
-          </div>
+        <div className="dashboard-grid">
+          <Card 
+            title="Total de Clientes" 
+            value={metrics.totalClientes} 
+            description="Total de clientes cadastrados no sistema." 
+            icon={Users} 
+          />
+          <Card 
+            title="Serviços Ativos" 
+            value={metrics.servicosAtivos} 
+            description="Total de serviços em andamento." 
+            icon={CheckCircle} 
+          />
+          <Card 
+            title="Receita (Pagos)" 
+            value={`R$ ${metrics.receitaTotal.toFixed(2)}`} 
+            description="Total acumulado de cobranças pagas." 
+            icon={DollarSign} 
+          />
+          <Card 
+            title="Visitas Pendentes" 
+            value={metrics.visitasPendentes} 
+            description="Visitas em aberto ou agendadas." 
+            icon={AlertTriangle} 
+          />
         </div>
       )}
     </div>
