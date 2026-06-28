@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Search, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Key, Loader2 } from 'lucide-react';
 import api from '../../services/api';
 import ClienteModal from '../../components/Modal/ClienteModal';
-import './Clientes.css'; // Usamos o CSS da página
+import AcessoModal from '../../components/Modal/AcessoModal';
+import './Clientes.css';
 
 export default function ClientesList() {
   const [clientes, setClientes] = useState([]);
@@ -10,7 +11,9 @@ export default function ClientesList() {
   
   // Controle do Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAcessoModalOpen, setIsAcessoModalOpen] = useState(false);
   const [clienteEditando, setClienteEditando] = useState(null);
+  const [clienteAcesso, setClienteAcesso] = useState(null);
 
   // Busca os clientes no backend quando a tela carregar
   const fetchClientes = async () => {
@@ -40,6 +43,11 @@ export default function ClientesList() {
   const handleEditar = (cliente) => {
     setClienteEditando(cliente);
     setIsModalOpen(true);
+  };
+
+  const handleGerarAcesso = (cliente) => {
+    setClienteAcesso(cliente);
+    setIsAcessoModalOpen(true);
   };
 
   // Deleta o cliente direto pela lista
@@ -103,10 +111,13 @@ export default function ClientesList() {
                     </td>
                     <td>
                       <div className="actions-cell">
-                        <button className="btn-icon edit" onClick={() => handleEditar(cliente)}>
+                        <button className="btn-icon" style={{ color: 'var(--color-primary)' }} onClick={() => handleGerarAcesso(cliente)} title="Gerar Acesso Web">
+                          <Key size={18} />
+                        </button>
+                        <button className="btn-icon edit" onClick={() => handleEditar(cliente)} title="Editar">
                           <Edit2 size={18} />
                         </button>
-                        <button className="btn-icon delete" onClick={() => handleDelete(cliente.id, cliente.nome)}>
+                        <button className="btn-icon delete" onClick={() => handleDelete(cliente.id, cliente.nome)} title="Excluir">
                           <Trash2 size={18} />
                         </button>
                       </div>
@@ -119,12 +130,20 @@ export default function ClientesList() {
         )}
       </div>
 
-      {/* Nosso Modal Fica Escondido Aqui */}
+      {/* Modal para Criar/Editar Cliente */}
       <ClienteModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
         clienteAtual={clienteEditando}
         onSaveSuccess={fetchClientes}
+      />
+
+      {/* Modal para Gerar Acesso Web do Cliente */}
+      <AcessoModal
+        isOpen={isAcessoModalOpen}
+        onClose={() => setIsAcessoModalOpen(false)}
+        cliente={clienteAcesso}
+        onSaveSuccess={() => {}}
       />
     </div>
   );

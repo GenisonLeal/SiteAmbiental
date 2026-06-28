@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.dependencies import get_current_user
 from app.database import get_db
 from app.models.cobranca import Cobranca
+from app.models.usuario import Usuario
 from app.models.visita import Visita
 from app.schemas.cobranca import CobrancaCreate, CobrancaResponse, CobrancaUpdate
 
@@ -42,11 +43,22 @@ async def create_cobranca(
 @router.get("/", response_model=list[CobrancaResponse])
 async def list_cobrancas(
     db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)],
     skip: int = 0,
     limit: int = 100
 ):
     """Lista as cobranças cadastradas."""
-    stmt = select(Cobranca).offset(skip).limit(limit).order_by(Cobranca.data_vencimento.desc())
+    from app.models.usuario import RoleUsuario
+    from app.models.cliente import Cliente
+    
+    stmt = select(Cobranca)
+    
+    if current_user.role == RoleUsuario.cliente:
+        # Se for cliente, faz o JOIN da Cobrança -> Visita -> Cliente
+        # para garantir que ele só veja os boletos das visitas da casa dele
+        stmt = stmt.join(Visita).join(Cliente).where(Cliente.usuario_id == current_user.id)
+        
+    stmt = stmt.offset(skip).limit(limit).order_by(Cobranca.data_vencimento.desc())
     result = await db.execute(stmt)
     return result.scalars().all()
 

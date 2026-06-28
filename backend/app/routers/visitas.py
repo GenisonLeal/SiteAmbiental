@@ -13,6 +13,7 @@ from app.auth.dependencies import get_current_user
 from app.database import get_db
 from app.models.cliente import Cliente
 from app.models.servico import Servico
+from app.models.usuario import Usuario
 from app.models.visita import Visita
 from app.schemas.visita import VisitaCreate, VisitaResponse, VisitaUpdate
 
@@ -49,17 +50,25 @@ async def create_visita(
 @router.get("/", response_model=list[VisitaResponse])
 async def list_visitas(
     db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)],
     skip: int = 0,
     limit: int = 100
 ):
     """Lista as visitas agendadas e realizadas."""
+    from app.models.usuario import RoleUsuario
+
     stmt = (
         select(Visita)
         .options(selectinload(Visita.cliente), selectinload(Visita.servico))
-        .offset(skip)
-        .limit(limit)
-        .order_by(Visita.data_agendada.asc())
     )
+
+    if current_user.role == RoleUsuario.cliente:
+        # Se for cliente, filtra para mostrar APENAS as visitas que o cliente_id seja 
+        # aquele associado ao usuario_id deste cliente.
+        stmt = stmt.join(Cliente).where(Cliente.usuario_id == current_user.id)
+
+    stmt = stmt.offset(skip).limit(limit).order_by(Visita.data_agendada.asc())
+    
     result = await db.execute(stmt)
     return result.scalars().all()
 

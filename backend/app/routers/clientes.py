@@ -104,3 +104,49 @@ async def delete_cliente(
 
     await db.delete(cliente)
     await db.commit()
+
+
+from pydantic import BaseModel
+from app.auth.security import get_password_hash
+from app.models.usuario import RoleUsuario
+
+class AcessoCreate(BaseModel):
+    senha: str
+
+@router.post("/{cliente_id}/gerar-acesso")
+async def gerar_acesso_cliente(
+    cliente_id: UUID,
+    acesso_in: AcessoCreate,
+    db: Annotated[AsyncSession, Depends(get_db)]
+):
+    """Gera ou atualiza a senha de acesso web para um cliente específico."""
+    cliente = await db.get(Cliente, cliente_id)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+
+    if not cliente.email:
+        raise HTTPException(status_code=400, detail="Cliente não possui e-mail cadastrado")
+
+    # Verifica se o cliente já possui um usuário
+    if cliente.usuario_id:
+        usuario = await db.get(Usuario, cliente.usuario_id)
+        # Se já tem acesso, apenas atualiza a senha
+        usuario.senha_hash = get_password_hash(acesso_in.senha)
+    else:
+        # Se não tem, cria um novo usuário com role 'cliente'
+        novo_usuario = Usuario(
+            nome=cliente.nome,
+            email=cliente.email,
+            senha_hash=get_password_hash(acesso_in.senha),
+            role=RoleUsuario.cliente,
+            ativo=True
+        )
+        db.add(novo_usuario)
+        await db.commit()
+        await db.refresh(novo_usuario)
+        
+        # Vincula ao cliente
+        cliente.usuario_id = novo_usuario.id
+
+    await db.commit()
+    return {"message": "Acesso gerado com sucesso", "email": cliente.email}

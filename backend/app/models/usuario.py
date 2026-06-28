@@ -19,6 +19,7 @@ class RoleUsuario(str, enum.Enum):
     admin = "admin"          # Acesso total ao sistema
     tecnico = "tecnico"      # Executa visitas, visualiza suas próprias OSs
     atendente = "atendente"  # Gerencia clientes, agendamentos e cobranças
+    cliente = "cliente"      # Cliente final (acessa apenas o próprio painel)
 
 
 class Usuario(ModelBase):

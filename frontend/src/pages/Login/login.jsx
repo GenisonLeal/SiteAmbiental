@@ -30,12 +30,24 @@ export default function Login() {
       const token = response.data.access_token;
       localStorage.setItem('protecta_token', token);
 
-      // Redireciona para o Dashboard silenciosamente
-      navigate('/dashboard');
+      // Busca o perfil do usuário para saber para onde direcioná-lo
+      const meResponse = await axios.get('http://localhost:8000/api/auth/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const role = meResponse.data.role;
+      localStorage.setItem('protecta_role', role);
+      localStorage.setItem('protecta_user_nome', meResponse.data.nome);
+
+      if (role === 'cliente') {
+        navigate('/portal');
+      } else {
+        navigate('/dashboard');
+      }
 
     } catch (error) {
-      if (error.response?.status === 401) {
-        setErro("E-mail ou senha incorretos.");
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        setErro("E-mail, senha incorretos ou acesso negado.");
       } else {
         setErro("Falha ao conectar com o servidor.");
       }

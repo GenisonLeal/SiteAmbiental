@@ -2,7 +2,10 @@
 Model SQLAlchemy para a entidade Cliente.
 Representa pessoas físicas ou jurídicas que contratam os serviços.
 """
-from sqlalchemy import String, Text
+import uuid
+
+from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import ModelBase
@@ -36,13 +39,17 @@ class Cliente(ModelBase):
     )
 
     # ── Endereço ──────────────────────────────────────────────────────────────
-    logradouro: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    numero: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    complemento: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    bairro: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    endereco: Mapped[str | None] = mapped_column(String(255), nullable=True)
     cidade: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    estado: Mapped[str | None] = mapped_column(String(2), nullable=True)  # "SP", "RJ"
-    cep: Mapped[str | None] = mapped_column(String(9), nullable=True)     # "00000-000"
+
+    # FK para o Usuario que representa este cliente no sistema
+    usuario_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("usuarios.id", ondelete="SET NULL"),
+        nullable=True,
+        unique=True,  # 1 Cliente = 1 Usuario de login
+        index=True,
+    )
 
     observacoes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
@@ -53,6 +60,12 @@ class Cliente(ModelBase):
         "Visita",
         back_populates="cliente",
         cascade="all, delete-orphan",
+    )
+
+    # Relacionamento 1:1 com Usuário (para acesso ao painel do cliente)
+    usuario: Mapped["Usuario"] = relationship(  # noqa: F821
+        "Usuario",
+        foreign_keys=[usuario_id],
     )
 
     def __repr__(self) -> str:

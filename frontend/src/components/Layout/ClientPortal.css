@@ -1,0 +1,139 @@
+/* Estilos do Portal do Cliente */
+
+.client-portal-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Header Superior */
+.portal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.portal-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.logo-badge {
+  font-size: 0.75rem;
+  background-color: #e2e8f0;
+  color: #475569;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.portal-user-area {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.welcome-text {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.welcome-text strong {
+  color: #0f172a;
+}
+
+.btn-logout-portal {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s;
+}
+
+.btn-logout-portal:hover {
+  background-color: #fee2e2;
+}
+
+/* Nav Secundária */
+.portal-nav {
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 5%;
+}
+
+.portal-nav-content {
+  display: flex;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  padding: 1rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-tab:hover {
+  color: var(--color-primary);
+}
+
+.nav-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Main Content */
+.portal-content {
+  flex: 1;
+  padding: 2rem 5%;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Footer */
+.portal-footer {
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .welcome-text {
+    display: none;
+  }
+  .logout-text {
+    display: none;
+  }
+  .btn-logout-portal {
+    padding: 0.5rem;
+  }
+}
