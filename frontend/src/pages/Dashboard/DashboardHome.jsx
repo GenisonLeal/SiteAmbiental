@@ -65,7 +65,7 @@ export default function DashboardHome() {
           <Loader2 size={40} className="spinner" />
         </div>
       ) : (
-        <div className="dashboard-grid">
+        <div className="stats-grid">
           <Card 
             title="Total de Clientes" 
             value={metrics.totalClientes} 

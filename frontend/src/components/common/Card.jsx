@@ -1,3 +1,5 @@
+import './Card.css';
+
 export default function Card({ 
   title, 
   value, 
@@ -7,14 +9,20 @@ export default function Card({
   className = '' 
 }) {
   return (
-    <div className={`dashboard-card ${className}`.trim()}>
+    <div className={`card-wrapper ${className}`.trim()}>
       <div className="card-header">
-        <h3>
-          {Icon && <Icon size={20} style={{ marginRight: '8px' }} />} 
-          {title}
-        </h3>
-        {value !== undefined && <span className="card-value">{value}</span>}
+        <div className="card-title-container">
+          <h3>{title}</h3>
+          {value !== undefined && <span className="card-value">{value}</span>}
+        </div>
+        
+        {Icon && (
+          <div className="card-icon-container">
+            <Icon size={24} />
+          </div>
+        )}
       </div>
+      
       {description && <p className="card-desc">{description}</p>}
       
       {children && <div className="card-body">{children}</div>}
