@@ -23,7 +23,7 @@ export default function Login() {
       formData.append('username', email); 
       formData.append('password', senha);
 
-      const response = await api.post('/auth/login', formData, {
+      const response = await api.post('/api/auth/login', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -32,7 +32,7 @@ export default function Login() {
       const token = response.data.access_token;
 
       // Busca o perfil do usuário para saber para onde direcioná-lo
-      const meResponse = await api.get('/auth/me', {
+      const meResponse = await api.get('/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
