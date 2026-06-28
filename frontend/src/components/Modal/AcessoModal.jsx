@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Key } from 'lucide-react';
 import api from '../../services/api';
+import Button from '../common/Button';
 
 export default function AcessoModal({ isOpen, onClose, cliente, onSaveSuccess }) {
   const [senha, setSenha] = useState('');
@@ -74,12 +75,12 @@ export default function AcessoModal({ isOpen, onClose, cliente, onSaveSuccess })
           </div>
 
           <div className="modal-footer">
-            <button type="button" className="btn-outline" onClick={onClose} disabled={loading}>
+            <Button variant="outline" onClick={onClose} disabled={loading}>
               Cancelar
-            </button>
-            <button type="submit" className="btn-primary" disabled={loading || !cliente.email}>
-              {loading ? 'Salvando...' : 'Gerar Acesso'}
-            </button>
+            </Button>
+            <Button type="submit" variant="primary" isLoading={loading} disabled={!cliente.email}>
+              Gerar Acesso
+            </Button>
           </div>
         </form>
       </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save, Loader2 } from 'lucide-react';
 import api from '../../services/api';
+import Button from '../common/Button';
 
 export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSuccess }) {
   const [formData, setFormData] = useState({
@@ -132,13 +133,12 @@ export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSucc
           </div>
 
           <div className="modal-footer">
-            <button type="button" className="btn-outline" onClick={onClose} disabled={loading}>
+            <Button variant="outline" onClick={onClose} disabled={loading}>
               Cancelar
-            </button>
-            <button type="submit" className="btn-primary" disabled={loading}>
-              {loading ? <Loader2 size={20} className="spinner" /> : <Save size={20} />}
+            </Button>
+            <Button type="submit" variant="primary" isLoading={loading} icon={Save}>
               Salvar
-            </button>
+            </Button>
           </div>
         </form>
 
