@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { X, Save, Loader2 } from 'lucide-react';
+import { Save, Loader2 } from 'lucide-react';
 import api from '../../services/api';
 import Button from '../common/Button';
 import Input from '../common/Input';
+import BaseModal from '../common/BaseModal';
 
 export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSuccess }) {
   const [formData, setFormData] = useState({
@@ -72,44 +73,37 @@ export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSucc
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        
-        <div className="modal-header">
-          <h3 className="modal-title">
-            {clienteAtual ? 'Editar Cliente' : 'Novo Cliente'}
-          </h3>
-          <button className="close-btn" onClick={onClose}><X size={24} /></button>
+    <BaseModal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={clienteAtual ? 'Editar Cliente' : 'Novo Cliente'}
+    >
+      <form onSubmit={handleSubmit}>
+        <div className="modal-body">
+          
+          {erro && (
+            <div className="error-message">
+              {erro}
+            </div>
+          )}
+
+          {/* Inputs do Formulário usando componente genérico */}
+          <Input label="Nome" name="nome" value={formData.nome} onChange={handleChange} required />
+          <Input label="E-mail" name="email" type="email" value={formData.email} onChange={handleChange} required />
+          <Input label="CPF ou CNPJ" name="cpf_cnpj" value={formData.cpf_cnpj} onChange={handleChange} required />
+          <Input label="Telefone (Opcional)" name="telefone" value={formData.telefone} onChange={handleChange} />
+          <Input label="Endereço (Opcional)" name="endereco" value={formData.endereco} onChange={handleChange} />
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="modal-body">
-            
-            {erro && (
-              <div className="error-message">
-                {erro}
-              </div>
-            )}
-
-            {/* Inputs do Formulário usando componente genérico */}
-            <Input label="Nome" name="nome" value={formData.nome} onChange={handleChange} required />
-            <Input label="E-mail" name="email" type="email" value={formData.email} onChange={handleChange} required />
-            <Input label="CPF ou CNPJ" name="cpf_cnpj" value={formData.cpf_cnpj} onChange={handleChange} required />
-            <Input label="Telefone (Opcional)" name="telefone" value={formData.telefone} onChange={handleChange} />
-            <Input label="Endereço (Opcional)" name="endereco" value={formData.endereco} onChange={handleChange} />
-          </div>
-
-          <div className="modal-footer">
-            <Button variant="outline" onClick={onClose} disabled={loading}>
-              Cancelar
-            </Button>
-            <Button type="submit" variant="primary" isLoading={loading} icon={Save}>
-              Salvar
-            </Button>
-          </div>
-        </form>
-
-      </div>
-    </div>
+        <div className="modal-footer">
+          <Button variant="outline" onClick={onClose} disabled={loading}>
+            Cancelar
+          </Button>
+          <Button type="submit" variant="primary" isLoading={loading} icon={Save}>
+            Salvar
+          </Button>
+        </div>
+      </form>
+    </BaseModal>
   );
 }
