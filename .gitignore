@@ -32,8 +32,11 @@ dist-ssr
 .vite
 .eslintcache
 
-# Plano de implementação (uso pessoal, não versionar)
+# Plano de implementação e estudos (uso pessoal, não versionar)
 PLANO_IMPLEMENTACAO.md
+ESTUDO_FASE1.md
+ESTUDO_FASE2.md
+ESTUDO_FASE3.md
 
 # Python
 __pycache__/
