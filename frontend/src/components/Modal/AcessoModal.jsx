@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Key } from 'lucide-react';
 import api from '../../services/api';
 import Button from '../common/Button';
+import Input from '../common/Input';
 
 export default function AcessoModal({ isOpen, onClose, cliente, onSaveSuccess }) {
   const [senha, setSenha] = useState('');
@@ -59,19 +60,17 @@ export default function AcessoModal({ isOpen, onClose, cliente, onSaveSuccess })
               </div>
             )}
 
-            <div className="form-group">
-              <label className="form-label">Nova Senha *</label>
-              <input
-                type="password"
-                className="form-input"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                placeholder="Digite a senha..."
-                required
-                minLength={6}
-                disabled={loading || !cliente.email}
-              />
-            </div>
+            <Input
+              label="Nova Senha"
+              name="senha"
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              placeholder="Digite a senha..."
+              required
+              minLength={6}
+              disabled={loading || !cliente.email}
+            />
           </div>
 
           <div className="modal-footer">

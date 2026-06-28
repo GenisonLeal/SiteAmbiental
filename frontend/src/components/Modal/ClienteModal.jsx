@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Save, Loader2 } from 'lucide-react';
 import api from '../../services/api';
 import Button from '../common/Button';
+import Input from '../common/Input';
 
 export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSuccess }) {
   const [formData, setFormData] = useState({
@@ -90,46 +91,12 @@ export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSucc
               </div>
             )}
 
-            {/* Inputs do Formulário usando as classes do Login.css por reuso ou globais */}
-            <div className="form-group">
-              <label className="form-label">Nome *</label>
-              <input 
-                name="nome" value={formData.nome} onChange={handleChange}
-                className="form-input" required 
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">E-mail *</label>
-              <input 
-                name="email" type="email" value={formData.email} onChange={handleChange}
-                className="form-input" required 
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">CPF ou CNPJ *</label>
-              <input 
-                name="cpf_cnpj" value={formData.cpf_cnpj} onChange={handleChange}
-                className="form-input" required 
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Telefone (Opcional)</label>
-              <input 
-                name="telefone" value={formData.telefone} onChange={handleChange}
-                className="form-input" 
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Endereço (Opcional)</label>
-              <input 
-                name="endereco" value={formData.endereco} onChange={handleChange}
-                className="form-input" 
-              />
-            </div>
+            {/* Inputs do Formulário usando componente genérico */}
+            <Input label="Nome" name="nome" value={formData.nome} onChange={handleChange} required />
+            <Input label="E-mail" name="email" type="email" value={formData.email} onChange={handleChange} required />
+            <Input label="CPF ou CNPJ" name="cpf_cnpj" value={formData.cpf_cnpj} onChange={handleChange} required />
+            <Input label="Telefone (Opcional)" name="telefone" value={formData.telefone} onChange={handleChange} />
+            <Input label="Endereço (Opcional)" name="endereco" value={formData.endereco} onChange={handleChange} />
           </div>
 
           <div className="modal-footer">
