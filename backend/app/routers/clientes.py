@@ -102,6 +102,11 @@ async def delete_cliente(
     if not cliente:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
 
+    if cliente.usuario_id:
+        usuario = await db.get(Usuario, cliente.usuario_id)
+        if usuario:
+            await db.delete(usuario)
+
     await db.delete(cliente)
     await db.commit()
 

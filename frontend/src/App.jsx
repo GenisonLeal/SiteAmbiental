@@ -31,12 +31,12 @@ function App() {
 
         {/* Agrupamento de Rotas Privadas (Admin e Atendentes) */}
         <Route element={<ProtectedRoute allowedRoles={['admin', 'atendente', 'tecnico']} />}>
-          <Route element={<DashboardLayout />}>
-            <Route path="/dashboard" element={<DashboardHome />} />
-            <Route path="/clientes" element={<ClientesList />} />
-            <Route path="/servicos" element={<ServicosList />} />
-            <Route path="/visitas" element={<VisitasList />} />
-            <Route path="/cobrancas" element={<CobrancasList />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<DashboardHome />} />
+            <Route path="clientes" element={<ClientesList />} />
+            <Route path="servicos" element={<ServicosList />} />
+            <Route path="visitas" element={<VisitasList />} />
+            <Route path="cobrancas" element={<CobrancasList />} />
           </Route>
         </Route>
 

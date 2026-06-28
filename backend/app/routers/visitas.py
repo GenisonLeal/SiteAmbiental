@@ -43,8 +43,11 @@ async def create_visita(
     nova_visita = Visita(**visita_in.model_dump())
     db.add(nova_visita)
     await db.commit()
-    await db.refresh(nova_visita)
-    return nova_visita
+    
+    # Carrega os relacionamentos para o response_model não falhar
+    stmt = select(Visita).options(selectinload(Visita.cliente), selectinload(Visita.servico)).where(Visita.id == nova_visita.id)
+    result = await db.execute(stmt)
+    return result.scalar_one()
 
 
 @router.get("/", response_model=list[VisitaResponse])
@@ -79,7 +82,10 @@ async def get_visita(
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """Busca os detalhes de uma visita específica."""
-    visita = await db.get(Visita, visita_id)
+    stmt = select(Visita).options(selectinload(Visita.cliente), selectinload(Visita.servico)).where(Visita.id == visita_id)
+    result = await db.execute(stmt)
+    visita = result.scalar_one_or_none()
+    
     if not visita:
         raise HTTPException(status_code=404, detail="Visita não encontrada")
     return visita
@@ -92,7 +98,10 @@ async def update_visita(
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """Atualiza o status, o técnico ou a data de uma visita."""
-    visita = await db.get(Visita, visita_id)
+    stmt = select(Visita).options(selectinload(Visita.cliente), selectinload(Visita.servico)).where(Visita.id == visita_id)
+    result = await db.execute(stmt)
+    visita = result.scalar_one_or_none()
+
     if not visita:
         raise HTTPException(status_code=404, detail="Visita não encontrada")
 
@@ -101,6 +110,7 @@ async def update_visita(
         setattr(visita, key, value)
 
     await db.commit()
+    # A sessão atualiza o objeto, que já possui os relacionamentos anexados graças ao selectinload
     await db.refresh(visita)
     return visita
 

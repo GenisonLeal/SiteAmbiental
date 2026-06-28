@@ -66,6 +66,8 @@ html {
 
 /* ── HERO SECTION ── */
 .hero-section {
+  position: relative;
+  overflow: hidden;
   padding: 8rem 5% 4rem;
   min-height: 90vh;
   display: flex;
@@ -74,6 +76,14 @@ html {
   align-items: center;
   text-align: center;
   background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hero-title {
@@ -196,7 +206,7 @@ html {
 /* ── SERVIÇOS (Cards Estáticos) ── */
 .servicos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -204,7 +214,7 @@ html {
 
 .servico-card {
   background: white;
-  padding: 2.5rem;
+  padding: 2.5rem 1.5rem;
   border-radius: var(--border-radius-lg);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s, box-shadow 0.3s;
@@ -230,14 +240,15 @@ html {
 }
 
 .servico-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin-bottom: 1rem;
   color: #0f172a;
 }
 
 .servico-card p {
   color: #64748b;
-  line-height: 1.6;
+  line-height: 1.5;
+  font-size: 0.95rem;
 }
 
 /* ── CONTATO ── */
@@ -275,12 +286,42 @@ html {
   background-color: #020617;
   color: #94a3b8;
   text-align: center;
-  padding: 2rem;
+  padding: 3rem 2rem 2rem;
+}
+
+.footer-socials {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.social-icon {
+  color: #94a3b8;
+  transition: color 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon:hover {
+  color: var(--color-primary);
+  transform: translateY(-3px);
 }
 
 /* Responsividade */
+@media (max-width: 1024px) {
+  .servicos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .empresa-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .servicos-grid {
     grid-template-columns: 1fr;
   }
   
