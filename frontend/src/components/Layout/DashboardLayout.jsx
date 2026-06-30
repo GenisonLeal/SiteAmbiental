@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -6,14 +7,17 @@ import {
   CalendarCheck, 
   Receipt,
   LogOut,
-  Leaf
+  Leaf,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import AlterarSenhaModal from '../Modal/AlterarSenhaModal';
 import './DashboardLayout.css';
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [isSenhaModalOpen, setIsSenhaModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -70,9 +74,20 @@ export default function DashboardLayout() {
       <main className="main-content">
         <header className="topbar">
           <h1 className="topbar-title">Administração</h1>
-          <div className="topbar-user">
-            <span>{user?.nome || 'Usuário'}</span>
-            <div className="user-avatar">{user?.nome?.charAt(0).toUpperCase() || 'U'}</div>
+          <div className="topbar-user" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span>{user?.nome || 'Usuário'}</span>
+              <div className="user-avatar">{user?.nome?.charAt(0).toUpperCase() || 'U'}</div>
+            </div>
+            <button 
+              className="btn-secondary" 
+              style={{ padding: '6px 12px', fontSize: '14px', display: 'flex', gap: '6px', alignItems: 'center' }}
+              onClick={() => setIsSenhaModalOpen(true)}
+              title="Alterar Senha"
+            >
+              <Settings size={16} />
+              Senha
+            </button>
           </div>
         </header>
 
@@ -82,6 +97,11 @@ export default function DashboardLayout() {
         </section>
       </main>
 
+      <AlterarSenhaModal 
+        isOpen={isSenhaModalOpen} 
+        onClose={() => setIsSenhaModalOpen(false)} 
+        user={user} 
+      />
     </div>
   );
 }
