@@ -48,3 +48,39 @@ Mensagem:
         # Aqui vamos deixar passar para que possamos logar sem derrubar a requisição,
         # mas em produção seria ideal tratar e talvez retornar Erro 500.
         raise
+
+
+def send_password_reset_email(email_destinatario: str, reset_link: str):
+    """
+    Envia um e-mail para o usuário com o link para redefinir a senha.
+    """
+    if not settings.smtp_user or not settings.smtp_password:
+        print(f"⚠️ Aviso: Credenciais SMTP não configuradas. Simulação de E-mail de Reset:")
+        print(f"--- Para: {email_destinatario}")
+        print(f"--- Link: {reset_link}")
+        return
+
+    msg = EmailMessage()
+    msg['Subject'] = "Recuperação de Senha - Protecta Ambiental"
+    msg['From'] = settings.email_from_name
+    msg['To'] = email_destinatario
+
+    corpo = f"""
+Você solicitou a redefinição da sua senha no sistema da Protecta Ambiental.
+
+Clique no link abaixo para criar uma nova senha:
+{reset_link}
+
+Este link é válido por 30 minutos.
+Se você não solicitou essa redefinição, por favor ignore este e-mail.
+    """
+    msg.set_content(corpo)
+
+    try:
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port) as server:
+            server.starttls()
+            server.login(settings.smtp_user, settings.smtp_password)
+            server.send_message(msg)
+    except Exception as e:
+        print(f"Erro ao enviar e-mail de recuperação: {e}")
+        raise

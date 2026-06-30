@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import LandingHome from './pages/Landing/LandingHome'
 import Login from './pages/Login/login'
+import ResetPassword from './pages/Login/ResetPassword'
 import ProtectedRoute from './routes/protectedRoute'
 import DashboardLayout from './components/Layout/DashboardLayout'
 import DashboardHome from './pages/Dashboard/DashboardHome'
@@ -21,8 +22,9 @@ function App() {
           {/* Rota Pública (Vitrine) */}
           <Route path="/" element={<LandingHome />} />
 
-          {/* Rota de Autenticação */}
+          {/* Rotas de Autenticação */}
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Portal do Cliente (Somente Cliente final) */}
           <Route element={<ProtectedRoute allowedRoles={['cliente']} />}>

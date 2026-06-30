@@ -21,6 +21,17 @@ class TokenPayload(BaseModel):
     sub: str | None = None
 
 
+class ForgotPasswordRequest(BaseModel):
+    """Schema para solicitação de link de redefinição de senha."""
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    """Schema para alteração efetiva de senha recebendo o token."""
+    token: str
+    nova_senha: str = Field(..., min_length=6, max_length=100)
+
+
 # ── Schemas de Usuário ────────────────────────────────────────────────────────
 class UsuarioBase(BaseModel):
     """Campos base compartilhados entre os schemas de usuário."""

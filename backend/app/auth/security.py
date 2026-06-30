@@ -56,3 +56,38 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     )
 
     return encoded_jwt
+
+
+def create_password_reset_token(email: str) -> str:
+    """
+    Cria um token JWT específico para redefinição de senha,
+    válido por 30 minutos.
+    """
+    expires = timedelta(minutes=30)
+    # Colocamos um type='reset' para diferenciar de um token de login
+    return create_access_token(
+        data={"sub": email, "type": "reset"},
+        expires_delta=expires
+    )
+
+
+def verify_password_reset_token(token: str) -> str | None:
+    """
+    Decodifica o token de reset e retorna o e-mail se for válido.
+    Retorna None se for inválido, expirado ou de tipo incorreto.
+    """
+    try:
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            algorithms=[settings.algorithm]
+        )
+        email: str = payload.get("sub")
+        token_type: str = payload.get("type")
+        
+        if email is None or token_type != "reset":
+            return None
+            
+        return email
+    except jwt.JWTError:
+        return None

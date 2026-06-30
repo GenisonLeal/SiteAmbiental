@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Leaf, Loader2 } from 'lucide-react';
+import { Leaf, Loader2, ArrowLeft } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import './login.css'; 
@@ -9,13 +9,16 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
+  const [sucesso, setSucesso] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErro('');
+    setSucesso('');
     setLoading(true);
 
     try {
@@ -57,6 +60,27 @@ export default function Login() {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setErro('');
+    setSucesso('');
+    setLoading(true);
+
+    try {
+      await api.post('/api/auth/forgot-password', { email });
+      setSucesso("Se o e-mail existir, um link de redefinição foi enviado para sua caixa de entrada.");
+      // Limpamos o email e voltamos para a tela de login
+      setTimeout(() => {
+        setIsForgotPassword(false);
+        setSucesso('');
+      }, 5000);
+    } catch (error) {
+      setErro("Falha ao solicitar a redefinição de senha. Tente novamente mais tarde.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-card">
@@ -64,64 +88,98 @@ export default function Login() {
         {/* Cabeçalho */}
         <div className="login-header">
           <div className="login-logo">
-            {/* O ícone puxa a cor primária naturalmente via CSS */}
             <Leaf size={28} />
             <span>Protecta</span>
           </div>
-          <p className="login-subtitle">Acesso ao Painel Administrativo</p>
+          <p className="login-subtitle">
+            {isForgotPassword ? "Recuperação de Senha" : "Acesso ao Painel Administrativo"}
+          </p>
         </div>
 
-        {/* Mensagem de Erro (Condicional) */}
-        {erro && (
-          <div className="error-message">
-            {erro}
-          </div>
+        {/* Mensagem de Erro ou Sucesso */}
+        {erro && <div className="error-message">{erro}</div>}
+        {sucesso && <div className="success-message" style={{ backgroundColor: '#dcfce7', color: '#15803d', padding: '0.75rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.875rem' }}>{sucesso}</div>}
+
+        {!isForgotPassword ? (
+          /* Formulário de Login */
+          <form onSubmit={handleLogin} className="login-form">
+            <div className="form-group">
+              <label className="form-label" htmlFor="email">E-mail</label>
+              <input
+                id="email"
+                type="email"
+                className="form-input"
+                placeholder="admin@protecta.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label className="form-label" htmlFor="senha" style={{ marginBottom: 0 }}>Senha</label>
+                <button 
+                  type="button" 
+                  className="forgot-password-link"
+                  onClick={() => { setIsForgotPassword(true); setErro(''); setSucesso(''); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontSize: '0.8rem', cursor: 'pointer', padding: 0 }}
+                >
+                  Esqueceu a senha?
+                </button>
+              </div>
+              <input
+                id="senha"
+                type="password"
+                className="form-input"
+                placeholder="••••••••"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+                style={{ marginTop: '0.5rem' }}
+              />
+            </div>
+
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? (
+                <><Loader2 size={20} className="spinner" /> Entrando...</>
+              ) : ("Entrar")}
+            </button>
+          </form>
+        ) : (
+          /* Formulário de Recuperação de Senha */
+          <form onSubmit={handleForgotPassword} className="login-form">
+            <div className="form-group">
+              <label className="form-label" htmlFor="reset-email">E-mail cadastrado</label>
+              <input
+                id="reset-email"
+                type="email"
+                className="form-input"
+                placeholder="Digite seu e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>
+                Enviaremos um link seguro para você redefinir sua senha.
+              </p>
+            </div>
+
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? (
+                <><Loader2 size={20} className="spinner" /> Enviando...</>
+              ) : ("Enviar link de recuperação")}
+            </button>
+
+            <button 
+              type="button" 
+              onClick={() => { setIsForgotPassword(false); setErro(''); setSucesso(''); }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--color-text-muted)', width: '100%', cursor: 'pointer', marginTop: '1rem', fontSize: '0.9rem' }}
+            >
+              <ArrowLeft size={16} /> Voltar para o Login
+            </button>
+          </form>
         )}
-
-        {/* Formulário */}
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
-            <label className="form-label" htmlFor="email">E-mail</label>
-            <input
-              id="email"
-              type="email"
-              className="form-input"
-              placeholder="admin@protecta.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="senha">Senha</label>
-            <input
-              id="senha"
-              type="password"
-              className="form-input"
-              placeholder="••••••••"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Botão de Submit */}
-          <button
-            type="submit"
-            className="login-button"
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <Loader2 size={20} className="spinner" />
-                Entrando...
-              </>
-            ) : (
-              "Entrar"
-            )}
-          </button>
-        </form>
 
       </div>
     </div>

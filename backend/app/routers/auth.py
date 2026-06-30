@@ -9,10 +9,17 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_user
-from app.auth.security import create_access_token, verify_password
+from app.auth.security import (
+    create_access_token, 
+    verify_password,
+    create_password_reset_token,
+    verify_password_reset_token,
+    get_password_hash
+)
 from app.database import get_db
 from app.models.usuario import Usuario
-from app.schemas.usuario import Token, UsuarioResponse
+from app.schemas.usuario import Token, UsuarioResponse, ForgotPasswordRequest, ResetPasswordRequest
+from app.services.email_service import send_password_reset_email
 
 # Cria o roteador para a tag "Auth" no Swagger
 router = APIRouter(prefix="/api/auth", tags=["Autenticação"])
@@ -75,3 +82,60 @@ async def read_users_me(
     # nós apenas retornamos o objeto. O `response_model=UsuarioResponse` 
     # garantirá que a senha não seja enviada de volta!
     return current_user
+
+
+@router.post("/forgot-password")
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    db: Annotated[AsyncSession, Depends(get_db)]
+):
+    """
+    Recebe um e-mail. Se o usuário existir, gera um token e envia o link de redefinição.
+    Sempre retorna sucesso (200) para evitar enumeração de e-mails.
+    """
+    stmt = select(Usuario).where(Usuario.email == request.email)
+    result = await db.execute(stmt)
+    usuario = result.scalar_one_or_none()
+
+    if usuario and usuario.ativo:
+        token = create_password_reset_token(email=usuario.email)
+        # O link do frontend (em produção, o ideal é pegar do .env)
+        # Assumindo Vite rodando na 5173
+        reset_link = f"http://localhost:5173/reset-password?token={token}"
+        
+        # Envia e-mail de fato
+        send_password_reset_email(usuario.email, reset_link)
+
+    return {"message": "Se o e-mail existir, um link de redefinição foi enviado."}
+
+
+@router.post("/reset-password")
+async def reset_password(
+    request: ResetPasswordRequest,
+    db: Annotated[AsyncSession, Depends(get_db)]
+):
+    """
+    Recebe o token de redefinição e a nova senha. Atualiza a senha do usuário.
+    """
+    email = verify_password_reset_token(request.token)
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token inválido ou expirado."
+        )
+
+    stmt = select(Usuario).where(Usuario.email == email)
+    result = await db.execute(stmt)
+    usuario = result.scalar_one_or_none()
+
+    if not usuario or not usuario.ativo:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuário não encontrado ou inativo."
+        )
+
+    # Hash the new password
+    usuario.senha_hash = get_password_hash(request.nova_senha)
+    await db.commit()
+
+    return {"message": "Senha alterada com sucesso!"}
