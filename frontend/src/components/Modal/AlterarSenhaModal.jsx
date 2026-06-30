@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { X, Lock, KeyRound } from 'lucide-react';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
-import './Modal.css';
 
 export default function AlterarSenhaModal({ isOpen, onClose, user }) {
   const [novaSenha, setNovaSenha] = useState('');
