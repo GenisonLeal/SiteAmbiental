@@ -114,8 +114,16 @@ async def delete_cliente(
     await db.commit()
 
 
+from pydantic import BaseModel, Field, field_validator
+from app.schemas.usuario import validar_senha_forte
+
 class AcessoCreate(BaseModel):
-    senha: str = Field(..., min_length=8, max_length=100, pattern=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
+    senha: str = Field(..., max_length=100)
+    
+    @field_validator('senha')
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        return validar_senha_forte(v)
 
 @router.post("/{cliente_id}/gerar-acesso", dependencies=[Depends(require_admin_or_atendente)])
 async def gerar_acesso_cliente(
