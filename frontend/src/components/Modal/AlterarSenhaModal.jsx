@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { X, Lock, KeyRound } from 'lucide-react';
-import { toast } from 'react-toastify';
 import api from '../../services/api';
 
 export default function AlterarSenhaModal({ isOpen, onClose, user }) {
@@ -14,7 +13,7 @@ export default function AlterarSenhaModal({ isOpen, onClose, user }) {
     e.preventDefault();
 
     if (novaSenha !== confirmarSenha) {
-      toast.error('As senhas não coincidem!');
+      alert('As senhas não coincidem!');
       return;
     }
 
@@ -22,12 +21,12 @@ export default function AlterarSenhaModal({ isOpen, onClose, user }) {
       setIsLoading(true);
       // O usuário envia PATCH para si mesmo com a nova senha
       await api.patch(`/api/usuarios/${user.id}`, { senha: novaSenha });
-      toast.success('Senha atualizada com sucesso!');
+      alert('Senha atualizada com sucesso!');
       onClose();
     } catch (error) {
       console.error(error);
       const msg = error.response?.data?.detail || 'Erro ao alterar a senha.';
-      toast.error(
+      alert(
         typeof msg === 'string' 
           ? msg 
           : 'A senha deve conter no mínimo 8 caracteres, com Letras Maiúsculas, Minúsculas, Números e Símbolos.'
