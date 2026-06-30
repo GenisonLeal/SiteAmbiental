@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user, require_internal_user
 from app.database import get_db
 from app.models.servico import Servico
 from app.schemas.servico import ServicoCreate, ServicoResponse, ServicoUpdate
@@ -16,7 +16,7 @@ from app.schemas.servico import ServicoCreate, ServicoResponse, ServicoUpdate
 router = APIRouter(
     prefix="/api/servicos",
     tags=["Serviços"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(get_current_user), Depends(require_internal_user)]
 )
 
 

@@ -77,3 +77,33 @@ async def require_admin(
             detail="Acesso negado. Requer privilégios de administrador.",
         )
     return current_user
+
+
+async def require_internal_user(
+    current_user: Annotated[Usuario, Depends(get_current_user)]
+) -> Usuario:
+    """
+    Permite acesso a Administradores, Atendentes e Técnicos.
+    Bloqueia Clientes de realizar operações que afetam o sistema interno.
+    """
+    if current_user.role == RoleUsuario.cliente:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acesso restrito a funcionários da empresa.",
+        )
+    return current_user
+
+
+async def require_admin_or_atendente(
+    current_user: Annotated[Usuario, Depends(get_current_user)]
+) -> Usuario:
+    """
+    Permite acesso apenas para Administradores e Atendentes (ex: criar clientes e finanças).
+    Bloqueia Técnicos e Clientes.
+    """
+    if current_user.role not in [RoleUsuario.admin, RoleUsuario.atendente]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acesso negado. Esta operação exige privilégios administrativos ou de atendimento.",
+        )
+    return current_user
