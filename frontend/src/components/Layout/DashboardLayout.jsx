@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import AlterarSenhaModal from '../Modal/AlterarSenhaModal';
+import Button from '../common/button';
 import './DashboardLayout.css';
 
 export default function DashboardLayout() {
@@ -79,15 +80,15 @@ export default function DashboardLayout() {
               <span>{user?.nome || 'Usuário'}</span>
               <div className="user-avatar">{user?.nome?.charAt(0).toUpperCase() || 'U'}</div>
             </div>
-            <button 
-              className="btn-secondary" 
-              style={{ padding: '6px 12px', fontSize: '14px', display: 'flex', gap: '6px', alignItems: 'center' }}
+            <Button 
+              variant="outline" 
+              size="sm"
+              icon={Settings}
               onClick={() => setIsSenhaModalOpen(true)}
               title="Alterar Senha"
             >
-              <Settings size={16} />
               Senha
-            </button>
+            </Button>
           </div>
         </header>
 
