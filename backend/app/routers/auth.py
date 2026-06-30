@@ -3,7 +3,7 @@ Rotas de Autenticação (Login e Perfil).
 """
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,6 +17,7 @@ from app.auth.security import (
     get_password_hash
 )
 from app.database import get_db
+from app.limiter import limiter
 from app.models.usuario import Usuario
 from app.schemas.usuario import Token, UsuarioResponse, ForgotPasswordRequest, ResetPasswordRequest
 from app.services.email_service import send_password_reset_email
@@ -26,7 +27,9 @@ router = APIRouter(prefix="/api/auth", tags=["Autenticação"])
 
 
 @router.post("/login", response_model=Token)
+@limiter.limit("5/minute")
 async def login(
+    request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
@@ -85,15 +88,17 @@ async def read_users_me(
 
 
 @router.post("/forgot-password")
+@limiter.limit("3/minute")
 async def forgot_password(
-    request: ForgotPasswordRequest,
+    request: Request,
+    body: ForgotPasswordRequest,
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """
     Recebe um e-mail. Se o usuário existir, gera um token e envia o link de redefinição.
     Sempre retorna sucesso (200) para evitar enumeração de e-mails.
     """
-    stmt = select(Usuario).where(Usuario.email == request.email)
+    stmt = select(Usuario).where(Usuario.email == body.email)
     result = await db.execute(stmt)
     usuario = result.scalar_one_or_none()
 
