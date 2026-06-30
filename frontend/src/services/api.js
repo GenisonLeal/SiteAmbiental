@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Cria uma instância "base" do axios apontando para o nosso servidor FastAPI
 const api = axios.create({
-  baseURL: 'http://localhost:8000', // A URL do backend
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000', // Em prod será resolvido pelo Nginx proxy
 });
 
 // "Interceptador" de Requisições:

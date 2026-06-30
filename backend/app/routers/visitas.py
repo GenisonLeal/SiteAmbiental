@@ -147,13 +147,16 @@ async def delete_visita(
     await db.commit()
 
 
-@router.get("/{visita_id}/pdf", response_class=Response)
+from fastapi.responses import Response, RedirectResponse
+from app.services.storage_service import upload_file_to_s3
+
+@router.get("/{visita_id}/pdf")
 async def download_visita_pdf(
     visita_id: UUID,
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
-    """Gera e retorna o PDF da Ordem de Serviço."""
+    """Gera o PDF da Ordem de Serviço, salva no S3 e redireciona."""
     stmt = (
         select(Visita)
         .where(Visita.id == visita_id)
@@ -170,12 +173,22 @@ async def download_visita_pdf(
         if visita.cliente.usuario_id != current_user.id:
             raise HTTPException(status_code=403, detail="Acesso negado a PDFs de outra OS.")
 
+    # Gera o PDF em memória (bytes)
     pdf_bytes = gerar_os_pdf(visita, visita.cliente, visita.servico)
+    file_name = f"OS_Protecta_{visita.id}.pdf"
 
+    # Tenta fazer upload para o S3
+    s3_url = upload_file_to_s3(pdf_bytes, file_name)
+
+    # Se a nuvem estiver configurada e o upload foi sucesso, redireciona o cliente para o S3
+    if s3_url:
+        return RedirectResponse(url=s3_url)
+
+    # Fallback: Se o S3 não estiver configurado no .env, baixa direto do backend
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f"attachment; filename=OS_Protecta_{visita.id}.pdf"
+            "Content-Disposition": f"attachment; filename={file_name}"
         }
     )

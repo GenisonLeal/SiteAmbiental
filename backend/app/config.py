@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """
     Classe de configurações.
-    Pydantic lê automaticamente as variáveis do arquivo .env e
+    # Configuração Pydantic para carregar do arquivo .env e
     valida os tipos (ex: porta como int, origens como list).
     """
 
@@ -43,6 +43,13 @@ class Settings(BaseSettings):
 
     # ── Celery / Redis ────────────────────────────────────────────────────────
     redis_url: str = "redis://localhost:6379/0"
+
+    # ── Object Storage / S3 ───────────────────────────────────────────────────
+    s3_endpoint_url: str = ""
+    s3_access_key: str = ""
+    s3_secret_key: str = ""
+    s3_bucket_name: str = ""
+    s3_region: str = "sa-east-1"
 
     # ── CORS ──────────────────────────────────────────────────────────────────
     # Recebido como string JSON do .env e convertido para lista
