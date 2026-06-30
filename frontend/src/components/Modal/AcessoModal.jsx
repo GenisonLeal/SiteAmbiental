@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Key } from 'lucide-react';
 import api from '../../services/api';
-import Button from '../common/Button';
-import Input from '../common/Input';
+import Button from '../common/button';
+import Input from '../common/input';
 import BaseModal from '../common/BaseModal';
 
 export default function AcessoModal({ isOpen, onClose, cliente, onSaveSuccess }) {
