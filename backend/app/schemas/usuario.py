@@ -29,7 +29,7 @@ class ForgotPasswordRequest(BaseModel):
 class ResetPasswordRequest(BaseModel):
     """Schema para alteração efetiva de senha recebendo o token."""
     token: str
-    nova_senha: str = Field(..., min_length=6, max_length=100)
+    nova_senha: str = Field(..., min_length=8, max_length=100, pattern=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
 
 
 # ── Schemas de Usuário ────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@ class UsuarioBase(BaseModel):
 class UsuarioCreate(UsuarioBase):
     """Schema para CRIAÇÃO de usuário (recebido do frontend)."""
     # A senha é recebida em texto puro e depois criptografada no banco
-    senha: str = Field(..., min_length=6, max_length=100)
+    senha: str = Field(..., min_length=8, max_length=100, pattern=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
 
 
 class UsuarioUpdate(BaseModel):
@@ -53,7 +53,7 @@ class UsuarioUpdate(BaseModel):
     email: EmailStr | None = None
     role: RoleUsuario | None = None
     ativo: bool | None = None
-    senha: str | None = Field(None, min_length=6, max_length=100)
+    senha: str | None = Field(None, min_length=8, max_length=100, pattern=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
 
 
 class UsuarioResponse(UsuarioBase):

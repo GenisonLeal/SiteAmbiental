@@ -115,7 +115,7 @@ async def delete_cliente(
 
 
 class AcessoCreate(BaseModel):
-    senha: str
+    senha: str = Field(..., min_length=8, max_length=100, pattern=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
 
 @router.post("/{cliente_id}/gerar-acesso", dependencies=[Depends(require_admin_or_atendente)])
 async def gerar_acesso_cliente(

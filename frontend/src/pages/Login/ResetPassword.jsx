@@ -31,8 +31,9 @@ export default function ResetPassword() {
       return;
     }
     
-    if (senha.length < 6) {
-      setErro('A senha deve ter pelo menos 6 caracteres.');
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(senha)) {
+      setErro('A senha deve ter no mínimo 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial (@$!%*?&).');
       return;
     }
 
