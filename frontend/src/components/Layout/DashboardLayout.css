@@ -165,14 +165,19 @@
   display: none;
 }
 
-/* ── Responsividade para Dispositivos Móveis ── */
-@media (max-width: 768px) {
+/* ── Responsividade para Dispositivos Móveis e Tablets ── */
+@media (max-width: 1024px) {
   .mobile-menu-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
   }
 
   .mobile-close-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .sidebar {
@@ -181,7 +186,7 @@
     left: -260px; /* Esconde a sidebar fora da tela */
     height: 100vh;
     transition: left 0.3s ease-in-out;
-    z-index: 50;
+    z-index: 9999;
   }
 
   .sidebar.open {
@@ -196,7 +201,7 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 40; /* Atrás da sidebar, mas na frente do resto */
+    z-index: 9998; /* Atrás da sidebar, mas na frente do resto */
   }
 
   .hide-on-mobile {
