@@ -48,7 +48,9 @@ export default function DashboardLayout() {
             style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
             onClick={() => {
               logout();
-              navigate('/', { replace: true });
+              // Usamos window.location para forçar a saída sem que o ProtectedRoute
+              // nos jogue de volta para a tela de /login primeiro.
+              window.location.href = '/';
             }}
             title="Sair e voltar para a página inicial"
           >
