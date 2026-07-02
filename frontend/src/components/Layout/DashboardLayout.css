@@ -143,3 +143,75 @@
   overflow-y: auto;
   padding: 2rem;
 }
+
+/* ── Elementos do Menu Mobile (Escondidos por padrão no Desktop) ── */
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.mobile-close-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* ── Responsividade para Dispositivos Móveis ── */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .mobile-close-btn {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px; /* Esconde a sidebar fora da tela */
+    height: 100vh;
+    transition: left 0.3s ease-in-out;
+    z-index: 50;
+  }
+
+  .sidebar.open {
+    left: 0; /* Mostra a sidebar */
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40; /* Atrás da sidebar, mas na frente do resto */
+  }
+
+  .hide-on-mobile {
+    display: none;
+  }
+
+  .topbar {
+    padding: 0 1rem;
+  }
+
+  .page-content {
+    padding: 1rem;
+  }
+
+  .user-name {
+    display: none; /* Esconde o nome do usuário no mobile para economizar espaço */
+  }
+}
