@@ -44,8 +44,17 @@ export default function DashboardLayout() {
       {/* ── Barra Lateral Esquerda (Sidebar) ── */}
       <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <Leaf size={24} color="#ffffff" />
-          <span className="sidebar-logo-text">Protecta</span>
+          <div 
+            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
+            onClick={() => {
+              logout();
+              navigate('/', { replace: true });
+            }}
+            title="Sair e voltar para a página inicial"
+          >
+            <Leaf size={24} color="#ffffff" />
+            <span className="sidebar-logo-text">Protecta</span>
+          </div>
           {/* Botão de fechar no mobile (opcional, mas bom ter) */}
           <button className="mobile-close-btn" onClick={closeMobileMenu}>
             <X size={24} color="#ffffff" />
