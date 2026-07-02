@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Leaf, Bug, ShieldCheck, Phone, Mail, MapPin, Camera, Globe, MessageCircle, Ghost, Droplets, Menu, X } from 'lucide-react';
+import { Leaf, Bug, ShieldCheck, Phone, Mail, MapPin, Instagram, Facebook, Linkedin, Ghost, Droplets, Menu, X } from 'lucide-react';
 import nossahistoriaImg from '../../assets/images/nossahistoria.png';
 import './Landing.css';
 
@@ -269,9 +269,9 @@ export default function LandingHome() {
       {/* ── FOOTER ── */}
       <footer className="landing-footer">
         <div className="footer-socials">
-          <a href="#instagram" className="social-icon" title="Instagram"><Camera size={24} /></a>
-          <a href="#facebook" className="social-icon" title="Facebook"><Globe size={24} /></a>
-          <a href="#linkedin" className="social-icon" title="LinkedIn"><MessageCircle size={24} /></a>
+          <a href="#instagram" className="social-icon" title="Instagram"><Instagram size={24} /></a>
+          <a href="#facebook" className="social-icon" title="Facebook"><Facebook size={24} /></a>
+          <a href="#linkedin" className="social-icon" title="LinkedIn"><Linkedin size={24} /></a>
         </div>
         <p>© {new Date().getFullYear()} Protecta Ambiental. Todos os direitos reservados.</p>
       </footer>
