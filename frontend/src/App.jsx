@@ -10,6 +10,7 @@ import ClientesList from './pages/Clientes/ClientesList'
 import ServicosList from './pages/Servicos/ServicosList'
 import VisitasList from './pages/Visitas/VisitasList'
 import CobrancasList from './pages/Cobrancas/CobrancasList'
+import Usuarios from './pages/Usuarios/Usuarios'
 
 import ClientPortalLayout from './components/Layout/ClientPortalLayout'
 import ClientDashboard from './pages/ClientPortal/ClientDashboard'
@@ -41,6 +42,10 @@ function App() {
               <Route path="servicos" element={<ServicosList />} />
               <Route path="visitas" element={<VisitasList />} />
               <Route path="cobrancas" element={<CobrancasList />} />
+              
+              <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route path="usuarios" element={<Usuarios />} />
+              </Route>
             </Route>
           </Route>
 

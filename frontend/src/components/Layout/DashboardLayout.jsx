@@ -10,7 +10,8 @@ import {
   Leaf,
   Settings,
   Menu,
-  X
+  X,
+  UserCog
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import AlterarSenhaModal from '../Modal/AlterarSenhaModal';
@@ -76,6 +77,13 @@ export default function DashboardLayout() {
             <Receipt size={20} />
             <span>Cobranças</span>
           </NavLink>
+
+          {user?.role === 'admin' && (
+            <NavLink to="/dashboard/usuarios" className="nav-item" onClick={closeMobileMenu}>
+              <UserCog size={20} />
+              <span>Equipe</span>
+            </NavLink>
+          )}
         </nav>
 
         <div className="sidebar-footer">
