@@ -1,6 +1,6 @@
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
-import { Leaf, Bug, ShieldCheck, Phone, Mail, MapPin, Camera, Globe, MessageCircle, Ghost, Droplets } from 'lucide-react';
+import { Leaf, Bug, ShieldCheck, Phone, Mail, MapPin, Camera, Globe, MessageCircle, Ghost, Droplets, Menu, X } from 'lucide-react';
 import nossahistoriaImg from '../../assets/images/nossahistoria.png';
 import './Landing.css';
 
@@ -133,6 +133,11 @@ function ParticlesBackground() {
 }
 
 export default function LandingHome() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMenu = () => setIsMobileMenuOpen(false);
+
   return (
     <div className="landing-container">
       
@@ -142,12 +147,17 @@ export default function LandingHome() {
           <Leaf size={28} />
           Protecta Ambiental
         </div>
-        <div className="nav-links">
-          <a href="#home">Home</a>
-          <a href="#empresa">A Empresa</a>
-          <a href="#servicos">Serviços</a>
-          <a href="#contato">Contato</a>
-          <Link to="/login" className="btn-login-nav">Área do Cliente</Link>
+        
+        <button className="landing-mobile-btn" onClick={toggleMenu}>
+          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+
+        <div className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
+          <a href="#home" onClick={closeMenu}>Home</a>
+          <a href="#empresa" onClick={closeMenu}>A Empresa</a>
+          <a href="#servicos" onClick={closeMenu}>Serviços</a>
+          <a href="#contato" onClick={closeMenu}>Contato</a>
+          <Link to="/login" className="btn-login-nav" onClick={closeMenu}>Área do Cliente</Link>
         </div>
       </nav>
 

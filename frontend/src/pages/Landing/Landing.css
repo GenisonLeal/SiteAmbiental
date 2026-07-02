@@ -64,6 +64,15 @@ html {
   transform: translateY(-2px);
 }
 
+.landing-mobile-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-primary);
+  padding: 0.5rem;
+}
+
 /* ── HERO SECTION ── */
 .hero-section {
   position: relative;
@@ -329,7 +338,31 @@ html {
     font-size: 2.5rem;
   }
   
+  .landing-mobile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .nav-links {
-    display: none; /* Em um cenário real, colocaríamos um menu hambúrguer */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    padding: 2rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-150%);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .nav-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
   }
 }
