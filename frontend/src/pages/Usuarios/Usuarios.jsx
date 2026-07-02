@@ -98,14 +98,16 @@ export default function Usuarios() {
                         {usuario.ativo ? 'Ativo' : 'Inativo'}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <button 
-                        className="action-btn"
-                        onClick={() => handleOpenModal(usuario)}
-                        title="Editar Colaborador"
-                      >
-                        <Edit2 size={18} />
-                      </button>
+                    <td>
+                      <div className="actions-cell">
+                        <button 
+                          className="btn-icon edit"
+                          onClick={() => handleOpenModal(usuario)}
+                          title="Editar Colaborador"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
