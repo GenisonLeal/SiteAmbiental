@@ -94,7 +94,7 @@ export default function DashboardLayout() {
               className="mobile-menu-btn"
               onClick={() => setIsMobileMenuOpen(true)}
             >
-              <Menu size={24} color="var(--color-text-main)" />
+              <Menu size={24} />
             </button>
             <h1 className="topbar-title">Administração</h1>
           </div>

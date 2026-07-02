@@ -168,7 +168,7 @@
 /* ── Responsividade para Dispositivos Móveis e Tablets ── */
 @media (max-width: 1024px) {
   .mobile-menu-btn {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     z-index: 100;
