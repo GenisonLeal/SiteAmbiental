@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Leaf, Loader2, ArrowLeft } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
@@ -87,10 +87,10 @@ export default function Login() {
 
         {/* Cabeçalho */}
         <div className="login-header">
-          <div className="login-logo">
+          <Link to="/" className="login-logo" style={{ textDecoration: 'none' }} title="Voltar para a página inicial">
             <Leaf size={28} />
             <span>Protecta</span>
-          </div>
+          </Link>
           <p className="login-subtitle">
             {isForgotPassword ? "Recuperação de Senha" : "Acesso ao Painel Administrativo"}
           </p>
