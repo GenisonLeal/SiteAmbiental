@@ -198,7 +198,7 @@ export default function LandingHome() {
   };
 
   return (
-    <div className="landing-container">
+    <div className="landing-container" data-theme="light">
       
       {/* ── NAVBAR ── */}
       <nav className="landing-nav">

@@ -5,7 +5,8 @@
  * color: var(--color-primary);
  */
 
- :root {
+:root,
+[data-theme='light'] {
   /* Tons Principais (Verde Natureza) */
   --color-primary: #2e7d32;
   --color-primary-hover: #1b5e20;

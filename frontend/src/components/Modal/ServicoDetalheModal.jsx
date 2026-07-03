@@ -43,14 +43,14 @@ export default function ServicoDetalheModal({ isOpen, onClose, servico }) {
         </div>
 
         {/* Detalhamento Dinâmico */}
-        <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+        <div style={{ backgroundColor: 'var(--color-background)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
           <h4 style={{ color: 'var(--color-primary)', marginBottom: '1rem', fontSize: '1.1rem' }}>Como Funciona e Indicações</h4>
           
           <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
             {servico.details.map((detail, index) => (
               <li key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
                 <span style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>•</span>
-                <span style={{ color: 'var(--color-text-main)' }}>{detail}</span>
+                <span style={{ color: 'var(--color-text-main)', lineHeight: '1.5' }}>{detail}</span>
               </li>
             ))}
           </ul>
