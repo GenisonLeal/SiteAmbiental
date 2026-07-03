@@ -309,65 +309,51 @@ export default function LandingHome() {
           </p>
           
           <div className="contato-info">
-            {/* Telefone: link tel: no mobile, copiar em qualquer tela */}
-            <div className="info-item">
+            {/* Telefone: link tel: no mobile, clique para copiar no desktop */}
+            <div className="info-item" onClick={() => handleCopy(CONTATO.telefone, 'telefone')}>
               <Phone className="icon" size={24} />
-              <a href={`tel:+${CONTATO.telefoneLimpo}`} className="info-link mobile-only-link">
+              <a href={`tel:+${CONTATO.telefoneLimpo}`} className="info-link mobile-only-link" onClick={(e) => e.stopPropagation()}>
                 {CONTATO.telefone}
               </a>
               <span className="info-text desktop-only-text">{CONTATO.telefone}</span>
-              <button 
-                className="copy-btn" 
-                onClick={() => handleCopy(CONTATO.telefone, 'telefone')}
-                title="Copiar telefone"
-              >
-                {copiedField === 'telefone' ? <Check size={16} /> : <Copy size={16} />}
-              </button>
+              {copiedField === 'telefone' && <span className="copied-badge">Copiado!</span>}
             </div>
 
-            {/* Email: abre Gmail compose ao clicar, e permite copiar */}
+            {/* Email: mailto: no mobile (abre Gmail app), Gmail web no desktop */}
             <div className="info-item">
+              <Mail className="icon" size={24} />
               <a 
-                href={`https://mail.google.com/mail/?view=cm&to=${CONTATO.email}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="info-link"
-                title="Enviar e-mail pelo Gmail"
+                href={`mailto:${CONTATO.email}`}
+                className="info-link mobile-only-link"
               >
-                <Mail className="icon" size={24} />
+                {CONTATO.email}
               </a>
               <a 
                 href={`https://mail.google.com/mail/?view=cm&to=${CONTATO.email}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="info-link"
+                className="info-link desktop-only-text"
               >
                 {CONTATO.email}
               </a>
               <button 
-                className="copy-btn" 
+                className="copy-btn-inline" 
                 onClick={() => handleCopy(CONTATO.email, 'email')}
                 title="Copiar e-mail"
               >
-                {copiedField === 'email' ? <Check size={16} /> : <Copy size={16} />}
+                {copiedField === 'email' ? <Check size={14} /> : <Copy size={14} />}
               </button>
             </div>
 
-            {/* Endereço: abre Google Maps ao clicar, e permite copiar */}
-            <div className="info-item">
-              <a href={CONTATO.enderecoMaps} target="_blank" rel="noopener noreferrer" className="info-link" title="Abrir no Google Maps">
+            {/* Endereço: abre Google Maps ao clicar, clique para copiar */}
+            <div className="info-item" onClick={() => handleCopy(CONTATO.endereco, 'endereco')}>
+              <a href={CONTATO.enderecoMaps} target="_blank" rel="noopener noreferrer" className="info-link" onClick={(e) => e.stopPropagation()} title="Abrir no Google Maps">
                 <MapPin className="icon" size={24} />
               </a>
-              <a href={CONTATO.enderecoMaps} target="_blank" rel="noopener noreferrer" className="info-link">
+              <a href={CONTATO.enderecoMaps} target="_blank" rel="noopener noreferrer" className="info-link" onClick={(e) => e.stopPropagation()}>
                 {CONTATO.endereco}
               </a>
-              <button 
-                className="copy-btn" 
-                onClick={() => handleCopy(CONTATO.endereco, 'endereco')}
-                title="Copiar endereço"
-              >
-                {copiedField === 'endereco' ? <Check size={16} /> : <Copy size={16} />}
-              </button>
+              {copiedField === 'endereco' && <span className="copied-badge">Copiado!</span>}
             </div>
           </div>
         </div>
