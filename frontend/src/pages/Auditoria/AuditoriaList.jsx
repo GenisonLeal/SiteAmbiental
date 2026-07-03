@@ -53,7 +53,7 @@ export default function AuditoriaList() {
             <Loader2 className="spinner" size={32} style={{ margin: '0 auto 10px auto' }} />
             <p>Carregando registros...</p>
           </div>
-        ) : logs.length === 0 ? (
+        ) : !Array.isArray(logs) || logs.length === 0 ? (
           <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-text-muted)' }}>
             Nenhum registro de auditoria encontrado.
           </div>
