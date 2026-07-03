@@ -1,8 +1,9 @@
 from datetime import datetime
+from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 class AuditoriaLogResponse(BaseModel):
-    id: str
+    id: UUID
     usuario_email: str
     acao: str
     entidade: str
