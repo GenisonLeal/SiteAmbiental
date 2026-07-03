@@ -230,6 +230,7 @@ html {
   border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .servico-card:hover {
@@ -247,7 +248,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.5rem auto;
 }
 
 .servico-card h3 {
