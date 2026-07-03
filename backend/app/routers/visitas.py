@@ -19,6 +19,7 @@ from app.models.visita import Visita
 from app.schemas.visita import VisitaCreate, VisitaResponse, VisitaUpdate
 from app.services.pdf_service import gerar_os_pdf
 from app.services.email_service import send_agendamento_email, send_conclusao_email
+from app.services.auditoria_service import registrar_log
 
 
 router = APIRouter(
@@ -31,7 +32,8 @@ router = APIRouter(
 @router.post("/", response_model=VisitaResponse, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_internal_user)])
 async def create_visita(
     visita_in: VisitaCreate,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
     """Agenda uma nova Visita / Ordem de Serviço."""
     cliente = await db.get(Cliente, visita_in.cliente_id)
@@ -44,6 +46,7 @@ async def create_visita(
 
     nova_visita = Visita(**visita_in.model_dump())
     db.add(nova_visita)
+    await registrar_log(db, current_user.email, "CREATE", "Visita", detalhes={"cliente_id": str(cliente.id), "servico": servico.nome})
     await db.commit()
     
     stmt = select(Visita).options(selectinload(Visita.cliente), selectinload(Visita.servico)).where(Visita.id == nova_visita.id)
@@ -106,7 +109,8 @@ async def get_visita(
 async def update_visita(
     visita_id: UUID,
     visita_in: VisitaUpdate,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
     """Atualiza o status, o técnico ou a data de uma visita."""
     stmt = select(Visita).options(selectinload(Visita.cliente), selectinload(Visita.servico)).where(Visita.id == visita_id)
@@ -122,6 +126,7 @@ async def update_visita(
     for key, value in update_data.items():
         setattr(visita, key, value)
 
+    await registrar_log(db, current_user.email, "UPDATE", "Visita", visita_id, detalhes=update_data)
     await db.commit()
     await db.refresh(visita)
 
@@ -136,7 +141,8 @@ async def update_visita(
 @router.delete("/{visita_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_internal_user)])
 async def delete_visita(
     visita_id: UUID,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
     """Cancela/Deleta uma visita permanentemente."""
     visita = await db.get(Visita, visita_id)
@@ -144,6 +150,7 @@ async def delete_visita(
         raise HTTPException(status_code=404, detail="Visita não encontrada")
 
     await db.delete(visita)
+    await registrar_log(db, current_user.email, "DELETE", "Visita", visita_id, detalhes={"status_anterior": visita.status})
     await db.commit()
 
 

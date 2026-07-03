@@ -11,6 +11,7 @@ from app.models.cliente import Cliente
 from app.models.servico import Servico
 from app.models.visita import Visita
 from app.models.cobranca import Cobranca
+from app.models.auditoria import AuditoriaLog
 
 # Facilita a importação: from app.models import Usuario, Cliente...
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "Servico",
     "Visita",
     "Cobranca",
+    "AuditoriaLog",
 ]

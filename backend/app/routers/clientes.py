@@ -15,6 +15,7 @@ from app.database import get_db
 from app.models.cliente import Cliente
 from app.models.usuario import Usuario, RoleUsuario
 from app.schemas.cliente import ClienteCreate, ClienteResponse, ClienteUpdate
+from app.services.auditoria_service import registrar_log
 
 router = APIRouter(
     prefix="/api/clientes",
@@ -26,7 +27,8 @@ router = APIRouter(
 @router.post("/", response_model=ClienteResponse, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_admin_or_atendente)])
 async def create_cliente(
     cliente_in: ClienteCreate,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
     """Cria um novo cliente."""
     stmt = select(Cliente).where(Cliente.cpf_cnpj == cliente_in.cpf_cnpj)
@@ -39,6 +41,7 @@ async def create_cliente(
     
     novo_cliente = Cliente(**cliente_in.model_dump())
     db.add(novo_cliente)
+    await registrar_log(db, current_user.email, "CREATE", "Cliente", detalhes={"nome": novo_cliente.nome, "cpf_cnpj": novo_cliente.cpf_cnpj})
     await db.commit()
     await db.refresh(novo_cliente)
     return novo_cliente
@@ -79,7 +82,8 @@ async def get_cliente(
 async def update_cliente(
     cliente_id: UUID,
     cliente_in: ClienteUpdate,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
     """Atualiza dados de um cliente."""
     cliente = await db.get(Cliente, cliente_id)
@@ -90,6 +94,7 @@ async def update_cliente(
     for key, value in update_data.items():
         setattr(cliente, key, value)
 
+    await registrar_log(db, current_user.email, "UPDATE", "Cliente", cliente_id, detalhes=update_data)
     await db.commit()
     await db.refresh(cliente)
     return cliente
@@ -98,7 +103,8 @@ async def update_cliente(
 @router.delete("/{cliente_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin_or_atendente)])
 async def delete_cliente(
     cliente_id: UUID,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
     """Deleta um cliente."""
     cliente = await db.get(Cliente, cliente_id)
@@ -111,6 +117,7 @@ async def delete_cliente(
             await db.delete(usuario)
 
     await db.delete(cliente)
+    await registrar_log(db, current_user.email, "DELETE", "Cliente", cliente_id, detalhes={"nome": cliente.nome})
     await db.commit()
 
 
@@ -129,7 +136,8 @@ class AcessoCreate(BaseModel):
 async def gerar_acesso_cliente(
     cliente_id: UUID,
     acesso_in: AcessoCreate,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[Usuario, Depends(get_current_user)]
 ):
     """Gera ou atualiza a senha de acesso web para um cliente específico."""
     cliente = await db.get(Cliente, cliente_id)
@@ -156,5 +164,6 @@ async def gerar_acesso_cliente(
         
         cliente.usuario_id = novo_usuario.id
 
+    await registrar_log(db, current_user.email, "UPDATE", "Acesso Cliente", cliente_id, detalhes={"email": cliente.email, "acao": "Gerou acesso"})
     await db.commit()
     return {"message": "Acesso gerado com sucesso", "email": cliente.email}

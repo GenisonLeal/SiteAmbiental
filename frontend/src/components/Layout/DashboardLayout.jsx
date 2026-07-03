@@ -11,7 +11,8 @@ import {
   Settings,
   Menu,
   X,
-  UserCog
+  ShieldCheck,
+  ShieldAlert
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import AlterarSenhaModal from '../Modal/AlterarSenhaModal';
@@ -90,10 +91,17 @@ export default function DashboardLayout() {
           </NavLink>
 
           {user?.role === 'admin' && (
-            <NavLink to="/dashboard/usuarios" className="nav-item" onClick={closeMobileMenu}>
-              <UserCog size={20} />
-              <span>Equipe</span>
-            </NavLink>
+            <>
+              <NavLink to="/dashboard/usuarios" className="nav-item" onClick={closeMobileMenu}>
+                <ShieldCheck size={20} />
+                <span>Equipe</span>
+              </NavLink>
+
+              <NavLink to="/dashboard/auditoria" className="nav-item" onClick={closeMobileMenu}>
+                <ShieldAlert size={20} />
+                <span>Logs do Sistema</span>
+              </NavLink>
+            </>
           )}
         </nav>
 

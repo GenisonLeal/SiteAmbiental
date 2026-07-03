@@ -13,6 +13,7 @@ from app.auth.security import get_password_hash
 from app.database import get_db
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioCreate, UsuarioResponse, UsuarioUpdate
+from app.services.auditoria_service import registrar_log
 
 # ATENÇÃO: Ao invés de get_current_user, usamos require_admin.
 # Isso garante que um usuário normal receba Erro 403 (Acesso Negado) se tentar
@@ -27,7 +28,8 @@ router = APIRouter(
 @router.post("/", response_model=UsuarioResponse, status_code=status.HTTP_201_CREATED)
 async def create_usuario(
     usuario_in: UsuarioCreate,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_admin: Annotated[Usuario, Depends(require_admin)]
 ):
     """Cria um novo usuário (Técnico, Atendente ou outro Admin)."""
     # 1. Verifica se já existe alguém com esse e-mail
@@ -52,6 +54,7 @@ async def create_usuario(
     )
 
     db.add(novo_usuario)
+    await registrar_log(db, current_admin.email, "CREATE", "Usuário", detalhes={"nome": novo_usuario.nome, "email": novo_usuario.email, "role": novo_usuario.role})
     await db.commit()
     await db.refresh(novo_usuario)
     return novo_usuario
@@ -85,7 +88,8 @@ async def get_usuario(
 async def update_usuario(
     usuario_id: UUID,
     usuario_in: UsuarioUpdate,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_admin: Annotated[Usuario, Depends(require_admin)]
 ):
     """Atualiza dados de um usuário (Ex: desativar acesso, trocar senha, mudar cargo)."""
     usuario = await db.get(Usuario, usuario_id)
@@ -102,6 +106,8 @@ async def update_usuario(
     for key, value in update_data.items():
         setattr(usuario, key, value)
 
+    log_detalhes = {k: v for k, v in update_data.items() if k != "senha"}
+    await registrar_log(db, current_admin.email, "UPDATE", "Usuário", usuario_id, detalhes=log_detalhes)
     await db.commit()
     await db.refresh(usuario)
     return usuario
@@ -110,7 +116,8 @@ async def update_usuario(
 @router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_usuario(
     usuario_id: UUID,
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_admin: Annotated[Usuario, Depends(require_admin)]
 ):
     """
     Desativa a conta de um usuário (Soft Delete).
@@ -122,4 +129,5 @@ async def delete_usuario(
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
     usuario.ativo = False
+    await registrar_log(db, current_admin.email, "SOFT_DELETE", "Usuário", usuario_id, detalhes={"nome": usuario.nome})
     await db.commit()

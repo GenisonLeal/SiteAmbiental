@@ -11,6 +11,7 @@ import ServicosList from './pages/Servicos/ServicosList'
 import VisitasList from './pages/Visitas/VisitasList'
 import CobrancasList from './pages/Cobrancas/CobrancasList'
 import Usuarios from './pages/Usuarios/Usuarios'
+import AuditoriaList from './pages/Auditoria/AuditoriaList'
 
 import ClientPortalLayout from './components/Layout/ClientPortalLayout'
 import ClientDashboard from './pages/ClientPortal/ClientDashboard'
@@ -42,6 +43,16 @@ function App() {
               <Route path="servicos" element={<ServicosList />} />
               <Route path="visitas" element={<VisitasList />} />
               <Route path="cobrancas" element={<CobrancasList />} />
+              
+              {/* Auditoria (apenas Administrador) */}
+              <Route 
+                path="auditoria" 
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AuditoriaList />
+                  </ProtectedRoute>
+                } 
+              />
               
               <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                 <Route path="usuarios" element={<Usuarios />} />
