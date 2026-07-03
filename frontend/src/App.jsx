@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import LandingHome from './pages/Landing/LandingHome'
 import Login from './pages/Login/login'
 import ResetPassword from './pages/Login/ResetPassword'
@@ -18,9 +19,10 @@ import ClientDashboard from './pages/ClientPortal/ClientDashboard'
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <Routes>
           {/* Rota Pública (Vitrine) */}
           <Route path="/" element={<LandingHome />} />
 
@@ -54,7 +56,8 @@ function App() {
 
         </Routes>
       </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 

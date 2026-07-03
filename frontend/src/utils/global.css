@@ -32,6 +32,20 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+/* ── Tema Escuro (Dark Mode) ── */
+:root[data-theme='dark'] {
+  /* Tons Neutros (Foco no Slate/Cinza Escuro Moderno) */
+  --color-background: #0f172a;  /* Slate 900 */
+  --color-surface: #1e293b;     /* Slate 800 */
+  --color-text-main: #f8fafc;   /* Slate 50 */
+  --color-text-muted: #94a3b8;  /* Slate 400 */
+  --color-border: #334155;      /* Slate 700 */
+
+  /* Em modo escuro as sombras costumam ser mais pesadas para profundidade */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
 /* Reset básico universal para dar uma base limpa ao nosso Vanilla CSS */
 * {
   box-sizing: border-box;

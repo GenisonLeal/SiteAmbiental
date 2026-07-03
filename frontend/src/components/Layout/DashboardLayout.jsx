@@ -12,9 +12,12 @@ import {
   Menu,
   X,
   ShieldCheck,
-  ShieldAlert
+  ShieldAlert,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import AlterarSenhaModal from '../Modal/AlterarSenhaModal';
 import Button from '../common/button';
 import './DashboardLayout.css';
@@ -22,6 +25,7 @@ import './DashboardLayout.css';
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [isSenhaModalOpen, setIsSenhaModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -127,6 +131,13 @@ export default function DashboardLayout() {
           </div>
 
           <div className="topbar-user" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <button 
+              onClick={toggleTheme} 
+              className="theme-toggle-btn"
+              title={theme === 'light' ? 'Mudar para Tema Escuro' : 'Mudar para Tema Claro'}
+            >
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
             <div className="user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span className="user-name">{user?.nome || 'Usuário'}</span>
               <div className="user-avatar">{user?.nome?.charAt(0).toUpperCase() || 'U'}</div>
