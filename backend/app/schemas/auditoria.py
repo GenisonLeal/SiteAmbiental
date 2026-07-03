@@ -6,7 +6,7 @@ class AuditoriaLogResponse(BaseModel):
     usuario_email: str
     acao: str
     entidade: str
-    entidade_id: int | None = None
+    entidade_id: str | None = None
     detalhes: dict | None = None
     data_hora: datetime
 

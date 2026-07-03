@@ -21,7 +21,7 @@ class AuditoriaLog(ModelBase):
     entidade: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     
     # O ID do item que foi alterado (se aplicável)
-    entidade_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    entidade_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     
     # Detalhes adicionais (o que mudou, motivo, etc.)
     detalhes: Mapped[dict | None] = mapped_column(JSON, nullable=True)

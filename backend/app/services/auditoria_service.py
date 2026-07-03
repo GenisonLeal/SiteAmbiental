@@ -9,7 +9,7 @@ async def registrar_log(
     usuario_email: str,
     acao: str,
     entidade: str,
-    entidade_id: int | None = None,
+    entidade_id: str | None = None,
     detalhes: dict | None = None
 ) -> None:
     """
@@ -23,7 +23,7 @@ async def registrar_log(
             usuario_email=usuario_email,
             acao=acao,
             entidade=entidade,
-            entidade_id=entidade_id,
+            entidade_id=str(entidade_id) if entidade_id else None,
             detalhes=detalhes
         )
         db.add(log)
