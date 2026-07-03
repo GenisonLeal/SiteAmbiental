@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 class AuditoriaLogResponse(BaseModel):
-    id: int
+    id: str
     usuario_email: str
     acao: str
     entidade: str
