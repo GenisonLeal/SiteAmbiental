@@ -9,6 +9,7 @@ from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.limiter import limiter
+from app.middleware.waf import WAFMiddleware
 
 # ── Configuração da Aplicação ─────────────────────────────────────────────────
 app = FastAPI(
@@ -19,6 +20,12 @@ app = FastAPI(
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# ── Middlewares de Segurança ──────────────────────────────────────────────────
+# Registra o WAF antes do CORS, ou depois? Melhor depois do CORS para que as 
+# requisições de preflight (OPTIONS) funcionem mais rápido e o CORS possa
+# rejeitar origens indesejadas antes da análise detalhada do WAF.
+app.add_middleware(WAFMiddleware)
 
 # ── Configuração do CORS ──────────────────────────────────────────────────────
 # O CORS permite que o frontend (ex: React em localhost:5173) faça
