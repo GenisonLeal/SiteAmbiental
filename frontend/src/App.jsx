@@ -44,18 +44,10 @@ function App() {
               <Route path="visitas" element={<VisitasList />} />
               <Route path="cobrancas" element={<CobrancasList />} />
               
-              {/* Auditoria (apenas Administrador) */}
-              <Route 
-                path="auditoria" 
-                element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <AuditoriaList />
-                  </ProtectedRoute>
-                } 
-              />
-              
+              {/* Rotas restritas a Administradores */}
               <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                 <Route path="usuarios" element={<Usuarios />} />
+                <Route path="auditoria" element={<AuditoriaList />} />
               </Route>
             </Route>
           </Route>
