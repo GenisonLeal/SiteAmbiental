@@ -25,7 +25,7 @@ export default function ServicoDetalheModal({ isOpen, onClose, servico }) {
       title={servico.title}
       maxWidth="600px"
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '1.5rem' }}>
         
         {/* Cabeçalho do Serviço */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
