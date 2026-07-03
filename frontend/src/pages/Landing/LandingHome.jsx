@@ -5,6 +5,60 @@ import { FaInstagram, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import nossahistoriaImg from '../../assets/images/nossahistoria.png';
 import './Landing.css';
 
+import ServicoDetalheModal from '../../components/Modal/ServicoDetalheModal';
+
+// Array de Dados dos Serviços
+const servicosEspecialidades = [
+  {
+    id: 'dedetizacao',
+    icon: Bug,
+    title: 'Desinsetização (Dedetização)',
+    description: 'Controle eficaz de baratas, formigas, moscas, mosquitos e outros insetos rasteiros e voadores.',
+    details: [
+      'Aplicação de gel inodoro e invisível em áreas sensíveis (cozinhas, painéis elétricos).',
+      'Pulverização de efeito residual em rodapés e cantos escuros.',
+      'Controle de vetores de doenças para ambientes residenciais, industriais e alimentícios.',
+      'Tratamento preventivo e corretivo (infestações ativas).'
+    ]
+  },
+  {
+    id: 'desratizacao',
+    icon: Ghost,
+    title: 'Desratização',
+    description: 'Estratégias avançadas para eliminação e controle de roedores, garantindo a higiene e segurança.',
+    details: [
+      'Mapeamento estratégico e identificação de rotas e ninhos.',
+      'Instalação de Porta-Iscas de segurança (evita contato com cães/gatos e crianças).',
+      'Uso de raticidas de dose única (anticoagulantes modernos) com ação disfarçada.',
+      'Monitoramento periódico e selamento de vias de acesso estruturais.'
+    ]
+  },
+  {
+    id: 'descupinizacao',
+    icon: ShieldCheck,
+    title: 'Descupinização',
+    description: 'Proteção definitiva para seus móveis e madeiras estruturais com barreiras químicas.',
+    details: [
+      'Tratamento focado para Cupim de Madeira Seca (injeção em furos na madeira).',
+      'Tratamento em solo/barreira química para Cupins Subterrâneos (brocas ao redor do imóvel).',
+      'Pincelamento preventivo em estruturas de telhados antes da construção.',
+      'Garantia estendida contra retorno das colônias.'
+    ]
+  },
+  {
+    id: 'higienizacao',
+    icon: Droplets,
+    title: 'Higienização de Reservatórios',
+    description: 'Limpeza e desinfecção de caixas d\'água para garantir a qualidade da água consumida.',
+    details: [
+      'Remoção completa de biofilme, algas, lama e minerais sedimentados nas paredes.',
+      'Desinfecção rigorosa com pastilhas de cloro ativo estabilizado.',
+      'Fornecimento de Certificado/Laudo Técnico de Limpeza (exigido pela Vigilância Sanitária).',
+      'Recomendação obrigatória de repetição a cada 6 meses.'
+    ]
+  }
+];
+
 // Componente Interativo de Partículas (Canvas)
 function ParticlesBackground() {
   const canvasRef = useRef(null);
@@ -29,10 +83,10 @@ function ParticlesBackground() {
         this.baseY = y;
         this.x = x;
         this.y = y;
-        this.size = Math.random() * 5 + 3; // Tamanho do traço/pontilhado
-        this.angle = Math.random() * Math.PI * 2; // Ângulo aleatório
+        this.size = Math.random() * 5 + 3;
+        this.angle = Math.random() * Math.PI * 2;
         this.density = (Math.random() * 20) + 1;
-        this.color = '#065f46'; // Verde mais escuro
+        this.color = '#065f46';
       }
       draw() {
         ctx.save();
@@ -40,7 +94,6 @@ function ParticlesBackground() {
         ctx.rotate(this.angle);
         ctx.fillStyle = this.color;
         ctx.globalAlpha = 0.5;
-        // Desenha o traço (width = size, height = 2px)
         ctx.fillRect(-this.size / 2, -1, this.size, 2);
         ctx.restore();
       }
@@ -57,11 +110,9 @@ function ParticlesBackground() {
           let directionY = forceDirectionY * force * this.density;
 
           if (distance < mouse.radius) {
-            // Atração para o mouse (Agrupamento)
             this.x += directionX;
             this.y += directionY;
           } else {
-            // Retorna suavemente para a posição original
             if (this.x !== this.baseX) {
               this.x -= (this.x - this.baseX) / 20;
             }
@@ -70,7 +121,6 @@ function ParticlesBackground() {
             }
           }
         } else {
-          // Se o mouse sair da tela, volta ao normal
           if (this.x !== this.baseX) {
             this.x -= (this.x - this.baseX) / 20;
           }
@@ -84,7 +134,6 @@ function ParticlesBackground() {
 
     const initParticles = () => {
       particles = [];
-      // Quantidade de partículas baseada no tamanho da tela
       const numberOfParticles = (canvas.width * canvas.height) / 3000;
       for (let i = 0; i < numberOfParticles; i++) {
         let x = Math.random() * canvas.width;
@@ -135,9 +184,18 @@ function ParticlesBackground() {
 
 export default function LandingHome() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMenu = () => setIsMobileMenuOpen(false);
+
+  const openServiceModal = (servico) => {
+    setSelectedService(servico);
+  };
+
+  const closeServiceModal = () => {
+    setSelectedService(null);
+  };
 
   return (
     <div className="landing-container">
@@ -164,7 +222,6 @@ export default function LandingHome() {
 
       {/* ── HERO SECTION ── */}
       <section id="home" className="hero-section">
-        {/* Camada Dinâmica em Canvas interagindo com o mouse */}
         <ParticlesBackground />
         
         <div className="hero-content">
@@ -203,42 +260,23 @@ export default function LandingHome() {
       {/* ── SERVIÇOS ── */}
       <section id="servicos" className="section" style={{ backgroundColor: 'white' }}>
         <h2 className="section-title">Nossas Especialidades</h2>
-        <p className="section-subtitle">Técnicas avançadas para cada tipo de necessidade.</p>
+        <p className="section-subtitle">Técnicas avançadas para cada tipo de necessidade. Selecione para ver mais detalhes.</p>
         
         <div className="servicos-grid">
-          
-          <div className="servico-card">
-            <div className="servico-icon"><Bug size={32} /></div>
-            <h3>Desinsetização (Dedetização)</h3>
-            <p>
-              Controle eficaz de baratas, formigas, moscas, mosquitos e outros insetos rasteiros e voadores.
-            </p>
-          </div>
-
-          <div className="servico-card">
-            <div className="servico-icon"><Ghost size={32} /></div>
-            <h3>Desratização</h3>
-            <p>
-              Estratégias avançadas para eliminação e controle de roedores, garantindo a higiene e segurança do ambiente.
-            </p>
-          </div>
-
-          <div className="servico-card">
-            <div className="servico-icon"><ShieldCheck size={32} /></div>
-            <h3>Descupinização</h3>
-            <p>
-              Proteção definitiva para seus móveis e madeiras estruturais com barreiras químicas especializadas.
-            </p>
-          </div>
-
-          <div className="servico-card">
-            <div className="servico-icon"><Droplets size={32} /></div>
-            <h3>Higienização de Reservatórios</h3>
-            <p>
-              Limpeza e desinfecção de caixas d'água para garantir a qualidade da água consumida pela sua família ou empresa.
-            </p>
-          </div>
-
+          {servicosEspecialidades.map((servico) => (
+            <div 
+              key={servico.id} 
+              className="servico-card clickable"
+              onClick={() => openServiceModal(servico)}
+            >
+              <div className="servico-icon"><servico.icon size={32} /></div>
+              <h3>{servico.title}</h3>
+              <p>{servico.description}</p>
+              <div className="servico-action">
+                <span className="servico-link">Ver Detalhes</span>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -276,6 +314,13 @@ export default function LandingHome() {
         </div>
         <p>© {new Date().getFullYear()} Protecta Ambiental. Todos os direitos reservados.</p>
       </footer>
+
+      {/* ── MODAL DE DETALHES DOS SERVIÇOS ── */}
+      <ServicoDetalheModal 
+        isOpen={!!selectedService} 
+        onClose={closeServiceModal} 
+        servico={selectedService} 
+      />
 
     </div>
   );

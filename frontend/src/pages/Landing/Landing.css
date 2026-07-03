@@ -251,13 +251,44 @@ html {
 .servico-card h3 {
   font-size: 1.25rem;
   margin-bottom: 1rem;
-  color: #0f172a;
 }
 
 .servico-card p {
   color: #64748b;
-  line-height: 1.5;
+  line-height: 1.6;
   font-size: 0.95rem;
+}
+
+.servico-card.clickable {
+  cursor: pointer;
+}
+
+.servico-card.clickable:hover {
+  border-color: var(--color-primary-light);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.servico-action {
+  margin-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.servico-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.servico-card.clickable:hover .servico-link {
+  color: var(--color-primary-hover);
+  transform: translateX(4px);
 }
 
 /* ── CONTATO ── */
