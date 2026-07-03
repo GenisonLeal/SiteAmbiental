@@ -1,11 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Leaf, Bug, ShieldCheck, Phone, Mail, MapPin, Ghost, Droplets, Menu, X } from 'lucide-react';
-import { FaInstagram, FaFacebook, FaLinkedin } from 'react-icons/fa';
+import { Leaf, Bug, ShieldCheck, Phone, Mail, MapPin, Ghost, Droplets, Menu, X, Copy, Check } from 'lucide-react';
+import { FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
 import nossahistoriaImg from '../../assets/images/nossahistoria.png';
 import './Landing.css';
 
 import ServicoDetalheModal from '../../components/Modal/ServicoDetalheModal';
+
+// ── Dados de Contato (centralizados para manutenção fácil) ──
+const CONTATO = {
+  telefone: '(92) 98485-1809',
+  telefoneLimpo: '5592984851809',
+  email: 'protectaambiental7@gmail.com',
+  endereco: 'Manaus, AM',
+  enderecoMaps: 'https://www.google.com/maps/search/Manaus+AM',
+  instagram: 'https://www.instagram.com/protectaambiental',
+  facebook: 'https://www.facebook.com/protectaambiental',
+  whatsapp: 'https://wa.me/5592984851809',
+};
 
 // Array de Dados dos Serviços
 const servicosEspecialidades = [
@@ -185,6 +197,7 @@ function ParticlesBackground() {
 export default function LandingHome() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [copiedField, setCopiedField] = useState(null);
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMenu = () => setIsMobileMenuOpen(false);
@@ -195,6 +208,13 @@ export default function LandingHome() {
 
   const closeServiceModal = () => {
     setSelectedService(null);
+  };
+
+  const handleCopy = (text, field) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    });
   };
 
   return (
@@ -289,17 +309,65 @@ export default function LandingHome() {
           </p>
           
           <div className="contato-info">
+            {/* Telefone: link tel: no mobile, copiar em qualquer tela */}
             <div className="info-item">
               <Phone className="icon" size={24} />
-              <span>(11) 98765-4321</span>
+              <a href={`tel:+${CONTATO.telefoneLimpo}`} className="info-link mobile-only-link">
+                {CONTATO.telefone}
+              </a>
+              <span className="info-text desktop-only-text">{CONTATO.telefone}</span>
+              <button 
+                className="copy-btn" 
+                onClick={() => handleCopy(CONTATO.telefone, 'telefone')}
+                title="Copiar telefone"
+              >
+                {copiedField === 'telefone' ? <Check size={16} /> : <Copy size={16} />}
+              </button>
             </div>
+
+            {/* Email: abre Gmail compose ao clicar, e permite copiar */}
             <div className="info-item">
-              <Mail className="icon" size={24} />
-              <span>contato@protecta.com.br</span>
+              <a 
+                href={`https://mail.google.com/mail/?view=cm&to=${CONTATO.email}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="info-link"
+                title="Enviar e-mail pelo Gmail"
+              >
+                <Mail className="icon" size={24} />
+              </a>
+              <a 
+                href={`https://mail.google.com/mail/?view=cm&to=${CONTATO.email}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="info-link"
+              >
+                {CONTATO.email}
+              </a>
+              <button 
+                className="copy-btn" 
+                onClick={() => handleCopy(CONTATO.email, 'email')}
+                title="Copiar e-mail"
+              >
+                {copiedField === 'email' ? <Check size={16} /> : <Copy size={16} />}
+              </button>
             </div>
+
+            {/* Endereço: abre Google Maps ao clicar, e permite copiar */}
             <div className="info-item">
-              <MapPin className="icon" size={24} />
-              <span>Av. Paulista, 1000 - São Paulo, SP</span>
+              <a href={CONTATO.enderecoMaps} target="_blank" rel="noopener noreferrer" className="info-link" title="Abrir no Google Maps">
+                <MapPin className="icon" size={24} />
+              </a>
+              <a href={CONTATO.enderecoMaps} target="_blank" rel="noopener noreferrer" className="info-link">
+                {CONTATO.endereco}
+              </a>
+              <button 
+                className="copy-btn" 
+                onClick={() => handleCopy(CONTATO.endereco, 'endereco')}
+                title="Copiar endereço"
+              >
+                {copiedField === 'endereco' ? <Check size={16} /> : <Copy size={16} />}
+              </button>
             </div>
           </div>
         </div>
@@ -308,9 +376,9 @@ export default function LandingHome() {
       {/* ── FOOTER ── */}
       <footer className="landing-footer">
         <div className="footer-socials">
-          <a href="#instagram" className="social-icon" title="Instagram"><FaInstagram size={24} /></a>
-          <a href="#facebook" className="social-icon" title="Facebook"><FaFacebook size={24} /></a>
-          <a href="#linkedin" className="social-icon" title="LinkedIn"><FaLinkedin size={24} /></a>
+          <a href={CONTATO.instagram} target="_blank" rel="noopener noreferrer" className="social-icon" title="Instagram"><FaInstagram size={24} /></a>
+          <a href={CONTATO.facebook} target="_blank" rel="noopener noreferrer" className="social-icon" title="Facebook"><FaFacebook size={24} /></a>
+          <a href={CONTATO.whatsapp} target="_blank" rel="noopener noreferrer" className="social-icon" title="WhatsApp"><FaWhatsapp size={24} /></a>
         </div>
         <p>© {new Date().getFullYear()} Protecta Ambiental. Todos os direitos reservados.</p>
       </footer>
