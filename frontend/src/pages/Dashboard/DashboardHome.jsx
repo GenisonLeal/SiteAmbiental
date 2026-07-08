@@ -278,6 +278,8 @@ export default function DashboardHome() {
                         <select 
                           value={v.status} 
                           onChange={(e) => handleStatusChange(v.id, e.target.value)}
+                          disabled={v.status === 'concluida' || v.status === 'cancelada'}
+                          title={(v.status === 'concluida' || v.status === 'cancelada') ? 'Apenas administradores podem reabrir esta OS.' : 'Alterar status da OS'}
                           style={{
                             padding: '6px 12px',
                             borderRadius: '6px',
@@ -285,8 +287,9 @@ export default function DashboardHome() {
                             backgroundColor: 'var(--color-background)',
                             color: 'var(--color-text-main)',
                             fontSize: '0.85rem',
-                            cursor: 'pointer',
-                            fontWeight: '500'
+                            cursor: (v.status === 'concluida' || v.status === 'cancelada') ? 'not-allowed' : 'pointer',
+                            fontWeight: '500',
+                            opacity: (v.status === 'concluida' || v.status === 'cancelada') ? 0.6 : 1
                           }}
                         >
                           <option value="agendada">📅 Agendada</option>
