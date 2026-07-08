@@ -11,7 +11,8 @@ export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSucc
     email: '',
     telefone: '',
     cpf_cnpj: '',
-    endereco: ''
+    endereco: '',
+    cidade: ''
   });
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
@@ -28,11 +29,12 @@ export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSucc
           email: clienteAtual.email || '',
           telefone: clienteAtual.telefone || '',
           cpf_cnpj: clienteAtual.cpf_cnpj || '',
-          endereco: clienteAtual.endereco || ''
+          endereco: clienteAtual.endereco || '',
+          cidade: clienteAtual.cidade || ''
         });
       } else {
         // Modo Criação
-        setFormData({ nome: '', email: '', telefone: '', cpf_cnpj: '', endereco: '' });
+        setFormData({ nome: '', email: '', telefone: '', cpf_cnpj: '', endereco: '', cidade: '' });
       }
     }
   }, [isOpen, clienteAtual]);
@@ -92,7 +94,8 @@ export default function ClienteModal({ isOpen, onClose, clienteAtual, onSaveSucc
           <Input label="E-mail" name="email" type="email" value={formData.email} onChange={handleChange} required />
           <Input label="CPF ou CNPJ" name="cpf_cnpj" value={formData.cpf_cnpj} onChange={handleChange} required />
           <Input label="Telefone (Opcional)" name="telefone" value={formData.telefone} onChange={handleChange} />
-          <Input label="Endereço (Opcional)" name="endereco" value={formData.endereco} onChange={handleChange} />
+          <Input label="Endereço" name="endereco" value={formData.endereco} onChange={handleChange} placeholder="Ex: Rua das Flores, 123 - Bairro" />
+          <Input label="Cidade" name="cidade" value={formData.cidade} onChange={handleChange} placeholder="Ex: Manaus" />
         </div>
 
         <div className="modal-footer">
