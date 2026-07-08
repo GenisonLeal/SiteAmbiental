@@ -46,21 +46,19 @@ export default function DashboardHome() {
                    d.getFullYear() === hoje.getFullYear();
           };
           
-          const agendadasHoje = resVisitas.data.filter(v => 
-            isHoje(v.data_agendada) && v.status === 'agendada'
-          );
-          const concluidasHoje = resVisitas.data.filter(v => 
-            isHoje(v.data_agendada) && v.status === 'concluida'
-          );
+          const todasDeHoje = resVisitas.data.filter(v => isHoje(v.data_agendada));
+          
+          const agendadasOuAndamento = todasDeHoje.filter(v => v.status === 'agendada' || v.status === 'em_andamento');
+          const concluidasHoje = todasDeHoje.filter(v => v.status === 'concluida');
 
           setMetrics(prev => ({
             ...prev,
-            visitasHoje: agendadasHoje.length,
+            visitasHoje: agendadasOuAndamento.length,
             concluidasHoje: concluidasHoje.length
           }));
           
           // Ordena as do dia pela hora
-          const doDia = agendadasHoje.sort((a, b) => new Date(a.data_agendada) - new Date(b.data_agendada));
+          const doDia = todasDeHoje.sort((a, b) => new Date(a.data_agendada) - new Date(b.data_agendada));
           setVisitasDoDia(doDia);
 
         } else {
