@@ -38,13 +38,20 @@ export default function DashboardHome() {
         if (isTecnico) {
           // Técnico: Busca apenas visitas
           const resVisitas = await api.get('/api/visitas/');
-          const hojeStr = new Date().toISOString().split('T')[0];
+          const hoje = new Date();
+          const isHoje = (dateStr) => {
+            if (!dateStr) return false;
+            const d = new Date(dateStr);
+            return d.getDate() === hoje.getDate() && 
+                   d.getMonth() === hoje.getMonth() && 
+                   d.getFullYear() === hoje.getFullYear();
+          };
           
           const agendadasHoje = resVisitas.data.filter(v => 
-            v.data_agendada?.startsWith(hojeStr) && v.status === 'agendada'
+            isHoje(v.data_agendada) && v.status === 'agendada'
           );
           const concluidasHoje = resVisitas.data.filter(v => 
-            v.data_agendada?.startsWith(hojeStr) && v.status === 'concluida'
+            isHoje(v.data_agendada) && v.status === 'concluida'
           );
 
           setMetrics({
