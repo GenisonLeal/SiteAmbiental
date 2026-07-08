@@ -76,6 +76,8 @@ async def list_visitas(
 
     if current_user.role == RoleUsuario.cliente:
         stmt = stmt.join(Cliente).where(Cliente.usuario_id == current_user.id)
+    elif current_user.role == RoleUsuario.tecnico:
+        stmt = stmt.where(Visita.tecnico_id == current_user.id)
 
     stmt = stmt.offset(skip).limit(limit).order_by(Visita.data_agendada.asc())
     

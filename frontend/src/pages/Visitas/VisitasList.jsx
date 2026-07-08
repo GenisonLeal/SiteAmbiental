@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Loader2, FileText, CheckCircle2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Loader2, FileText, CheckCircle2, Eye } from 'lucide-react';
 import api from '../../services/api';
 import VisitaModal from '../../components/Modal/VisitaModal';
+import { useAuth } from '../../hooks/useAuth';
 import './Visitas.css';
 
 export default function VisitasList() {
+  const { user } = useAuth();
   const [visitas, setVisitas] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -94,10 +96,12 @@ export default function VisitasList() {
     <div>
       <div className="page-header">
         <h2 className="page-title">Ordens de Serviço (OS)</h2>
-        <button className="btn-primary" onClick={handleNovaVisita}>
-          <Plus size={20} />
-          Nova OS
-        </button>
+        {user?.role !== 'tecnico' && (
+          <button className="btn-primary" onClick={handleNovaVisita}>
+            <Plus size={20} />
+            Nova OS
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -149,12 +153,20 @@ export default function VisitasList() {
                           PDF
                         </button>
 
-                        <button className="btn-icon edit" onClick={() => handleEditar(v)} title="Editar OS">
-                          <Edit2 size={18} />
-                        </button>
-                        <button className="btn-icon delete" onClick={() => handleDelete(v.id)} title="Excluir OS">
-                          <Trash2 size={18} />
-                        </button>
+                        {user?.role === 'tecnico' ? (
+                          <button className="btn-icon" style={{ color: 'var(--color-primary)' }} onClick={() => handleEditar(v)} title="Visualizar OS">
+                            <Eye size={18} />
+                          </button>
+                        ) : (
+                          <>
+                            <button className="btn-icon edit" onClick={() => handleEditar(v)} title="Editar OS">
+                              <Edit2 size={18} />
+                            </button>
+                            <button className="btn-icon delete" onClick={() => handleDelete(v.id)} title="Excluir OS">
+                              <Trash2 size={18} />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -170,6 +182,7 @@ export default function VisitasList() {
         onClose={() => setIsModalOpen(false)}
         visitaAtual={visitaEditando}
         onSaveSuccess={fetchVisitas}
+        readOnly={user?.role === 'tecnico'}
       />
     </div>
   );
