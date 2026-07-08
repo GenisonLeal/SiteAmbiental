@@ -8,24 +8,22 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import require_admin
+from app.auth.dependencies import require_admin, require_admin_or_atendente
 from app.auth.security import get_password_hash
 from app.database import get_db
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioCreate, UsuarioResponse, UsuarioUpdate
 from app.services.auditoria_service import registrar_log
 
-# ATENÇÃO: Ao invés de get_current_user, usamos require_admin.
-# Isso garante que um usuário normal receba Erro 403 (Acesso Negado) se tentar
-# bater em qualquer uma destas rotas.
+# Removemos a dependência global do router para podermos liberar
+# acesso de leitura (GET) para Atendentes também.
 router = APIRouter(
     prefix="/api/usuarios",
-    tags=["Usuários (Admin)"],
-    dependencies=[Depends(require_admin)]
+    tags=["Usuários"]
 )
 
 
-@router.post("/", response_model=UsuarioResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=UsuarioResponse, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_admin)])
 async def create_usuario(
     usuario_in: UsuarioCreate,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -60,7 +58,7 @@ async def create_usuario(
     return novo_usuario
 
 
-@router.get("/", response_model=list[UsuarioResponse])
+@router.get("/", response_model=list[UsuarioResponse], dependencies=[Depends(require_admin_or_atendente)])
 async def list_usuarios(
     db: Annotated[AsyncSession, Depends(get_db)],
     skip: int = 0,
@@ -72,7 +70,7 @@ async def list_usuarios(
     return result.scalars().all()
 
 
-@router.get("/{usuario_id}", response_model=UsuarioResponse)
+@router.get("/{usuario_id}", response_model=UsuarioResponse, dependencies=[Depends(require_admin_or_atendente)])
 async def get_usuario(
     usuario_id: UUID,
     db: Annotated[AsyncSession, Depends(get_db)]
@@ -84,7 +82,7 @@ async def get_usuario(
     return usuario
 
 
-@router.patch("/{usuario_id}", response_model=UsuarioResponse)
+@router.patch("/{usuario_id}", response_model=UsuarioResponse, dependencies=[Depends(require_admin)])
 async def update_usuario(
     usuario_id: UUID,
     usuario_in: UsuarioUpdate,
@@ -113,7 +111,7 @@ async def update_usuario(
     return usuario
 
 
-@router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)])
 async def delete_usuario(
     usuario_id: UUID,
     db: Annotated[AsyncSession, Depends(get_db)],

@@ -6,6 +6,7 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
   const [formData, setFormData] = useState({
     cliente_id: '',
     servico_id: '',
+    tecnico_id: '',
     data_agendada: '',
     status: 'agendada',
     observacoes: ''
@@ -16,17 +17,20 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
   
   const [clientes, setClientes] = useState([]);
   const [servicos, setServicos] = useState([]);
+  const [tecnicos, setTecnicos] = useState([]);
   const [enderecoMaps, setEnderecoMaps] = useState('');
 
   useEffect(() => {
     const carregarDependencias = async () => {
       try {
-        const [resClientes, resServicos] = await Promise.all([
+        const [resClientes, resServicos, resUsuarios] = await Promise.all([
           api.get('/api/clientes/'),
-          api.get('/api/servicos/')
+          api.get('/api/servicos/'),
+          api.get('/api/usuarios/')
         ]);
         setClientes(resClientes.data);
         setServicos(resServicos.data.filter(s => s.ativo));
+        setTecnicos(resUsuarios.data.filter(u => u.role === 'tecnico' && u.ativo));
       } catch (err) {
         console.error("Erro ao carregar selects:", err);
       }
@@ -52,6 +56,7 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
         setFormData({
           cliente_id: visitaAtual.cliente_id || '',
           servico_id: visitaAtual.servico_id || '',
+          tecnico_id: visitaAtual.tecnico_id || '',
           data_agendada: dataFormatada,
           status: visitaAtual.status || 'agendada',
           observacoes: visitaAtual.observacoes || ''
@@ -68,6 +73,7 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
         setFormData({
           cliente_id: '',
           servico_id: '',
+          tecnico_id: '',
           data_agendada: '',
           status: 'agendada',
           observacoes: ''
@@ -206,6 +212,25 @@ export default function VisitaModal({ isOpen, onClose, visitaAtual, onSaveSucces
                   <option value="" disabled>Selecione um serviço...</option>
                   {servicos.map(s => (
                     <option key={s.id} value={s.id}>{s.nome} - R$ {s.preco_base}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Técnico Responsável</label>
+              {readOnly ? (
+                <div className="form-input" style={{ backgroundColor: 'var(--color-surface-hover)' }}>
+                  {tecnicos.find(t => t.id === formData.tecnico_id)?.nome || 'Nenhum técnico alocado'}
+                </div>
+              ) : (
+                <select 
+                  name="tecnico_id" value={formData.tecnico_id || ''} onChange={handleChange}
+                  className="form-input" disabled={readOnly}
+                >
+                  <option value="">Selecione um técnico (Opcional)...</option>
+                  {tecnicos.map(t => (
+                    <option key={t.id} value={t.id}>{t.nome}</option>
                   ))}
                 </select>
               )}
