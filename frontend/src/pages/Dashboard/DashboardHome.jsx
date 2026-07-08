@@ -139,7 +139,10 @@ export default function DashboardHome() {
   }, [isTecnico]);
 
   const openGoogleMaps = (cliente) => {
-    if (!cliente?.endereco) return;
+    if (!cliente?.endereco) {
+      alert("Este cliente não possui um endereço cadastrado. Vá até 'Clientes' e preencha o endereço.");
+      return;
+    }
     const endereco = `${cliente.endereco}, ${cliente.cidade || ''}`;
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`, '_blank');
   };
@@ -187,18 +190,25 @@ export default function DashboardHome() {
           <div style={{ marginTop: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0, color: 'var(--color-text-main)' }}>Roteiro do Dia</h3>
-              {visitasDoDia.length > 1 && (
+              {visitasDoDia.length > 0 && (
                 <button 
                   onClick={() => {
                     const enderecos = visitasDoDia
-                      .filter(v => v.cliente?.endereco)
+                      .filter(v => v.cliente && v.cliente.endereco && v.cliente.endereco.trim() !== '')
                       .map(v => encodeURIComponent(`${v.cliente.endereco}, ${v.cliente.cidade || ''}`));
                     
-                    if (enderecos.length < 2) {
-                      alert("Não há endereços suficientes para traçar uma rota multi-paradas.");
+                    if (enderecos.length === 0) {
+                      alert("Nenhum dos clientes agendados possui um endereço cadastrado no sistema.");
                       return;
                     }
 
+                    if (enderecos.length === 1) {
+                      // Apenas um endereço, cria rota direta da localização atual para lá
+                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${enderecos[0]}`, '_blank');
+                      return;
+                    }
+
+                    // Múltiplos endereços
                     const destination = enderecos[enderecos.length - 1];
                     const waypoints = enderecos.slice(0, -1).join('|');
                     window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}&waypoints=${waypoints}`, '_blank');
@@ -235,7 +245,9 @@ export default function DashboardHome() {
                     <div>
                       <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--color-primary)' }}>{formatarHora(v.data_agendada)} - {v.cliente?.nome}</h4>
                       <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{v.servico?.nome}</p>
-                      <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem' }}>{v.cliente?.endereco}</p>
+                      <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: !v.cliente?.endereco ? 'var(--color-error)' : 'inherit' }}>
+                        {v.cliente?.endereco ? v.cliente.endereco : '⚠️ Endereço não cadastrado!'}
+                      </p>
                     </div>
                     <button 
                       onClick={() => openGoogleMaps(v.cliente)}
