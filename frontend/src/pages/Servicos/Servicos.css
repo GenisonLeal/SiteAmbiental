@@ -79,7 +79,7 @@
 }
 
 .data-table tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: var(--color-background);
 }
 
 .actions-cell {

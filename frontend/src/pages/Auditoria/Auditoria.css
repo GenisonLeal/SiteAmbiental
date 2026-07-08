@@ -19,7 +19,7 @@
 }
 
 .log-table th {
-  background-color: #f8fafc;
+  background-color: var(--color-background);
   color: var(--color-text-muted);
   font-weight: 600;
   text-transform: uppercase;

@@ -37,7 +37,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #f8fafc;
+  background-color: var(--color-background);
   border-radius: var(--border-radius);
   border: 1px solid #f1f5f9;
   transition: border-color 0.2s;
