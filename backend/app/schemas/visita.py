@@ -39,6 +39,8 @@ class ClienteRef(BaseModel):
     id: UUID
     nome: str
     cpf_cnpj: str
+    endereco: str | None = None
+    cidade: str | None = Field(None, max_length=100)
 
     model_config = ConfigDict(from_attributes=True)
 
