@@ -170,7 +170,7 @@ export default function CobrancaModal({ isOpen, onClose, cobrancaAtual, onSaveSu
                 >
                   <option value="pendente">⏳ Pendente</option>
                   <option value="pago">✅ Pago</option>
-                  <option value="atrasado">🚨 Atrasado</option>
+                  <option value="vencido">🚨 Atrasado</option>
                 </select>
               </div>
 

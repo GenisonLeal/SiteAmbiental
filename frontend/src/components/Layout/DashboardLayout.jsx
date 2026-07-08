@@ -74,24 +74,28 @@ export default function DashboardLayout() {
             <span>Painel Resumo</span>
           </NavLink>
           
-          <NavLink to="/dashboard/clientes" className="nav-item" onClick={closeMobileMenu}>
-            <Users size={20} />
-            <span>Clientes</span>
-          </NavLink>
+          {user?.role !== 'tecnico' && (
+            <>
+              <NavLink to="/dashboard/clientes" className="nav-item" onClick={closeMobileMenu}>
+                <Users size={20} />
+                <span>Clientes</span>
+              </NavLink>
 
-          <NavLink to="/dashboard/servicos" className="nav-item" onClick={closeMobileMenu}>
-            <Briefcase size={20} />
-            <span>Serviços</span>
-          </NavLink>
+              <NavLink to="/dashboard/servicos" className="nav-item" onClick={closeMobileMenu}>
+                <Briefcase size={20} />
+                <span>Serviços</span>
+              </NavLink>
+
+              <NavLink to="/dashboard/cobrancas" className="nav-item" onClick={closeMobileMenu}>
+                <Receipt size={20} />
+                <span>Cobranças</span>
+              </NavLink>
+            </>
+          )}
 
           <NavLink to="/dashboard/visitas" className="nav-item" onClick={closeMobileMenu}>
             <CalendarCheck size={20} />
             <span>Visitas (OS)</span>
-          </NavLink>
-
-          <NavLink to="/dashboard/cobrancas" className="nav-item" onClick={closeMobileMenu}>
-            <Receipt size={20} />
-            <span>Cobranças</span>
           </NavLink>
 
           {user?.role === 'admin' && (

@@ -34,10 +34,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Token expirou ou é inválido
-      localStorage.removeItem('protecta_token');
-      // Redireciona o navegador "na marra" para a tela de login
-      window.location.href = '/login';
+      // Ignora o redirect se a falha for na própria tentativa de login (senha incorreta)
+      if (error.config && error.config.url !== '/api/auth/login') {
+        // Token expirou ou é inválido
+        localStorage.removeItem('protecta_token');
+        // Redireciona o navegador "na marra" para a tela de login
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

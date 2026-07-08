@@ -76,7 +76,13 @@ export default function UsuarioModal({ isOpen, onClose, usuarioAtual, onSaveSucc
     } catch (error) {
       if (error.response?.data?.detail) {
         const msg = error.response.data.detail;
-        setErro(typeof msg === 'string' ? msg : JSON.stringify(msg));
+        if (typeof msg === 'string') {
+          setErro(msg);
+        } else if (Array.isArray(msg)) {
+          setErro(msg.map(m => m.msg).join(', '));
+        } else {
+          setErro(JSON.stringify(msg));
+        }
       } else {
         setErro("Ocorreu um erro ao salvar o usuário.");
       }
