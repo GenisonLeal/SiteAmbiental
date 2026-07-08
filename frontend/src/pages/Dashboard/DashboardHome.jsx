@@ -141,9 +141,6 @@ export default function DashboardHome() {
       }
     };
 
-    fetchMetrics();
-  }, [isTecnico]); // Removido fetchMetrics daqui e executado direto. O React vai usar o hook normal.
-
   useEffect(() => {
     fetchMetrics();
   }, [isTecnico]);
