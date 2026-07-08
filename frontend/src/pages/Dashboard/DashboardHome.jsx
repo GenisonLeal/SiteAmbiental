@@ -185,7 +185,45 @@ export default function DashboardHome() {
           </div>
 
           <div style={{ marginTop: '2rem' }}>
-            <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-main)' }}>Roteiro do Dia</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0, color: 'var(--color-text-main)' }}>Roteiro do Dia</h3>
+              {visitasDoDia.length > 1 && (
+                <button 
+                  onClick={() => {
+                    const enderecos = visitasDoDia
+                      .filter(v => v.cliente?.endereco)
+                      .map(v => encodeURIComponent(`${v.cliente.endereco}, ${v.cliente.cidade || ''}`));
+                    
+                    if (enderecos.length < 2) {
+                      alert("Não há endereços suficientes para traçar uma rota multi-paradas.");
+                      return;
+                    }
+
+                    const destination = enderecos[enderecos.length - 1];
+                    const waypoints = enderecos.slice(0, -1).join('|');
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}&waypoints=${waypoints}`, '_blank');
+                  }}
+                  style={{
+                    background: 'var(--color-primary)',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
+                  title="Abre o Google Maps com a rota passando por todos os clientes do dia."
+                >
+                  <MapPin size={18} />
+                  Traçar Rota Completa
+                </button>
+              )}
+            </div>
+
             {visitasDoDia.length === 0 ? (
               <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--color-surface)', borderRadius: '12px' }}>
                 Nenhuma visita agendada para hoje. Aproveite o descanso!
@@ -201,7 +239,7 @@ export default function DashboardHome() {
                     </div>
                     <button 
                       onClick={() => openGoogleMaps(v.cliente)}
-                      style={{ background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-primary)' }}
+                      style={{ background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-primary)', flexShrink: 0, marginLeft: '1rem' }}
                       title="Abrir no Maps"
                     >
                       <MapPin size={20} />
