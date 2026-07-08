@@ -5,7 +5,8 @@ import Card from '../../components/common/Card';
 import { useAuth } from '../../hooks/useAuth';
 import {
   PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
+  LineChart, Line
 } from 'recharts';
 import './DashboardHome.css';
 
@@ -24,7 +25,8 @@ export default function DashboardHome() {
 
   const [chartData, setChartData] = useState({
     status: [],
-    servicos: []
+    servicos: [],
+    faturamento: []
   });
 
   const [visitasDoDia, setVisitasDoDia] = useState([]);
@@ -100,7 +102,31 @@ export default function DashboardHome() {
             Quantidade: servicoCount[k]
           })).sort((a, b) => b.Quantidade - a.Quantidade).slice(0, 5); // Top 5
 
-          setChartData({ status: statusData, servicos: servicosData });
+          // Faturamento Mensal (Últimos meses)
+          const mesesNomes = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+          const faturamentoMes = cobrancasPagas.reduce((acc, c) => {
+            if (c.data_pagamento) {
+              const dataObj = new Date(c.data_pagamento);
+              const mesAno = `${mesesNomes[dataObj.getMonth()]}/${dataObj.getFullYear().toString().slice(-2)}`;
+              acc[mesAno] = (acc[mesAno] || 0) + parseFloat(c.valor);
+            }
+            return acc;
+          }, {});
+
+          // Transforma o objeto num array, inverte e pega os últimos meses.
+          // Nota: Como objeto iterável não garante ordem temporal perfeita se houver buracos,
+          // a forma mais simples (sem libs de tempo complexas) é confiar na ordem lexicográfica de YYYY-MM se necessário, 
+          // mas vamos assumir as chaves geradas e ordenar pela string, o que é um atalho visual.
+          const faturamentoData = Object.keys(faturamentoMes).map(k => ({
+            name: k,
+            Valor: faturamentoMes[k]
+          }));
+
+          setChartData({ 
+            status: statusData, 
+            servicos: servicosData,
+            faturamento: faturamentoData
+          });
         }
       } catch (err) {
         console.error("Erro ao carregar métricas do dashboard:", err);
@@ -215,7 +241,7 @@ export default function DashboardHome() {
             />
           </div>
 
-          <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
+          <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
             <div className="chart-card" style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
               <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-main)', fontSize: '1.1rem' }}>Status das Ordens de Serviço</h3>
               <div style={{ width: '100%', height: 300 }}>
@@ -253,11 +279,29 @@ export default function DashboardHome() {
                     <XAxis dataKey="name" stroke="var(--color-text-muted)" fontSize={12} angle={-15} textAnchor="end" />
                     <YAxis stroke="var(--color-text-muted)" fontSize={12} allowDecimals={false} />
                     <RechartsTooltip 
-                      cursor={{fill: 'var(--color-surface-hover)'}}
+                      cursor={{fill: 'rgba(128, 128, 128, 0.1)'}}
                       contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }} 
                     />
                     <Bar dataKey="Quantidade" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
                   </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="chart-card" style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
+              <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-main)', fontSize: '1.1rem' }}>Faturamento (Últimos 6 meses)</h3>
+              <div style={{ width: '100%', height: 300 }}>
+                <ResponsiveContainer>
+                  <LineChart data={chartData.faturamento} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                    <XAxis dataKey="name" stroke="var(--color-text-muted)" fontSize={12} />
+                    <YAxis stroke="var(--color-text-muted)" fontSize={12} tickFormatter={(value) => `R$${value}`} />
+                    <RechartsTooltip 
+                      contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }} 
+                      formatter={(value) => [`R$ ${parseFloat(value).toFixed(2)}`, 'Faturamento']}
+                    />
+                    <Line type="monotone" dataKey="Valor" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 6 }} />
+                  </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
