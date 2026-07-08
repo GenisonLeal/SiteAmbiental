@@ -26,8 +26,13 @@ export default function DashboardHome() {
   const [chartData, setChartData] = useState({
     status: [],
     servicos: [],
-    faturamento: []
+    faturamento: [],
+    tecnicos: []
   });
+
+  const [filtroTecnico, setFiltroTecnico] = useState('mes');
+  const [todosUsuarios, setTodosUsuarios] = useState([]);
+  const [todasVisitas, setTodasVisitas] = useState([]);
 
   const [visitasDoDia, setVisitasDoDia] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,12 +68,16 @@ export default function DashboardHome() {
 
         } else {
           // Admin/Atendente
-          const [resClientes, resServicos, resVisitas, resCobrancas] = await Promise.all([
+          const [resClientes, resServicos, resVisitas, resCobrancas, resUsuarios] = await Promise.all([
             api.get('/api/clientes/'),
             api.get('/api/servicos/'),
             api.get('/api/visitas/'),
-            api.get('/api/cobrancas/')
+            api.get('/api/cobrancas/'),
+            api.get('/api/usuarios/')
           ]);
+
+          setTodosUsuarios(resUsuarios.data);
+          setTodasVisitas(resVisitas.data);
 
           const cobrancasPagas = resCobrancas.data.filter(c => c.status === 'pago');
           const receita = cobrancasPagas.reduce((acc, curr) => acc + parseFloat(curr.valor), 0);
@@ -142,6 +151,49 @@ export default function DashboardHome() {
   useEffect(() => {
     fetchMetrics();
   }, [isTecnico]);
+
+  // Hook separado para reprocessar o gráfico de técnicos quando o filtro mudar
+  useEffect(() => {
+    if (!isTecnico && todasVisitas.length > 0 && todosUsuarios.length > 0) {
+      const hoje = new Date();
+      
+      const isDentroDoFiltro = (dataStr) => {
+        if (!dataStr) return false;
+        const d = new Date(dataStr);
+        if (filtroTecnico === 'dia') {
+          return d.getDate() === hoje.getDate() && d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
+        }
+        if (filtroTecnico === 'semana') {
+          const seteDiasAtras = new Date();
+          seteDiasAtras.setDate(hoje.getDate() - 7);
+          return d >= seteDiasAtras && d <= hoje;
+        }
+        if (filtroTecnico === 'mes') {
+          return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
+        }
+        if (filtroTecnico === 'ano') {
+          return d.getFullYear() === hoje.getFullYear();
+        }
+        return true; // Todos
+      };
+
+      const concluidas = todasVisitas.filter(v => v.status === 'concluida' && isDentroDoFiltro(v.data_agendada));
+      
+      const tecnicoCount = concluidas.reduce((acc, v) => {
+        const tecnico = todosUsuarios.find(u => u.id === v.tecnico_id);
+        const nome = tecnico ? tecnico.nome : 'Sem Técnico';
+        acc[nome] = (acc[nome] || 0) + 1;
+        return acc;
+      }, {});
+
+      const tecnicosData = Object.keys(tecnicoCount).map(k => ({
+        name: k.length > 15 ? k.substring(0, 15) + '...' : k,
+        Concluidas: tecnicoCount[k]
+      })).sort((a, b) => b.Concluidas - a.Concluidas);
+
+      setChartData(prev => ({ ...prev, tecnicos: tecnicosData }));
+    }
+  }, [filtroTecnico, todasVisitas, todosUsuarios, isTecnico]);
 
   const handleStatusChange = async (visitaId, novoStatus) => {
     try {
@@ -409,6 +461,51 @@ export default function DashboardHome() {
                 </ResponsiveContainer>
               </div>
             </div>
+
+            <div className="chart-card" style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--color-border)', gridColumn: '1 / -1' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ margin: 0, color: 'var(--color-text-main)', fontSize: '1.1rem' }}>OS Finalizadas por Técnico</h3>
+                <select 
+                  value={filtroTecnico} 
+                  onChange={(e) => setFiltroTecnico(e.target.value)}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--color-background)',
+                    color: 'var(--color-text-main)',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  <option value="dia">Hoje</option>
+                  <option value="semana">Últimos 7 dias</option>
+                  <option value="mes">Este Mês</option>
+                  <option value="ano">Este Ano</option>
+                  <option value="todos">Todo o Período</option>
+                </select>
+              </div>
+              <div style={{ width: '100%', height: 300 }}>
+                {chartData.tecnicos && chartData.tecnicos.length > 0 ? (
+                  <ResponsiveContainer>
+                    <BarChart data={chartData.tecnicos} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                      <XAxis dataKey="name" stroke="var(--color-text-muted)" fontSize={12} angle={-15} textAnchor="end" />
+                      <YAxis stroke="var(--color-text-muted)" fontSize={12} allowDecimals={false} />
+                      <RechartsTooltip 
+                        cursor={{fill: 'rgba(128, 128, 128, 0.1)'}}
+                        contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }} 
+                      />
+                      <Bar dataKey="Concluidas" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
+                    Nenhuma ordem concluída neste período.
+                  </div>
+                )}
+              </div>
+            </div>
+
           </div>
         </>
       )}
