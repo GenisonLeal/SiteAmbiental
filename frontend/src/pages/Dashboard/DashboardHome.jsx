@@ -138,13 +138,17 @@ export default function DashboardHome() {
     fetchMetrics();
   }, [isTecnico]);
 
-  const openGoogleMaps = (cliente) => {
+  const handleGoogleMapsClick = (e, cliente) => {
     if (!cliente?.endereco) {
+      e.preventDefault();
       alert("Este cliente não possui um endereço cadastrado. Vá até 'Clientes' e preencha o endereço.");
-      return;
     }
+  };
+
+  const getGoogleMapsUrl = (cliente) => {
+    if (!cliente?.endereco) return '#';
     const endereco = `${cliente.endereco}, ${cliente.cidade || ''}`;
-    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`, '_blank');
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`;
   };
 
   const formatarHora = (dataStr) => {
@@ -190,48 +194,52 @@ export default function DashboardHome() {
           <div style={{ marginTop: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0, color: 'var(--color-text-main)' }}>Roteiro do Dia</h3>
-              {visitasDoDia.length > 0 && (
-                <button 
-                  onClick={() => {
-                    const enderecos = visitasDoDia
-                      .filter(v => v.cliente && v.cliente.endereco && v.cliente.endereco.trim() !== '')
-                      .map(v => encodeURIComponent(`${v.cliente.endereco}, ${v.cliente.cidade || ''}`));
-                    
-                    if (enderecos.length === 0) {
-                      alert("Nenhum dos clientes agendados possui um endereço cadastrado no sistema.");
-                      return;
-                    }
+              {(() => {
+                const enderecos = visitasDoDia
+                  .filter(v => v.cliente && v.cliente.endereco && v.cliente.endereco.trim() !== '')
+                  .map(v => encodeURIComponent(`${v.cliente.endereco}, ${v.cliente.cidade || ''}`));
+                
+                let mapsUrl = '#';
+                if (enderecos.length === 1) {
+                  mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${enderecos[0]}`;
+                } else if (enderecos.length > 1) {
+                  const destination = enderecos[enderecos.length - 1];
+                  const waypoints = enderecos.slice(0, -1).join('|');
+                  mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}&waypoints=${waypoints}`;
+                }
 
-                    if (enderecos.length === 1) {
-                      // Apenas um endereço, cria rota direta da localização atual para lá
-                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${enderecos[0]}`, '_blank');
-                      return;
-                    }
-
-                    // Múltiplos endereços
-                    const destination = enderecos[enderecos.length - 1];
-                    const waypoints = enderecos.slice(0, -1).join('|');
-                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}&waypoints=${waypoints}`, '_blank');
-                  }}
-                  style={{
-                    background: 'var(--color-primary)',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '0.9rem',
-                    fontWeight: '500'
-                  }}
-                  title="Abre o Google Maps com a rota passando por todos os clientes do dia."
-                >
-                  <MapPin size={18} />
-                  Traçar Rota Completa
-                </button>
-              )}
+                return visitasDoDia.length > 0 && (
+                  <a 
+                    href={mapsUrl}
+                    target={mapsUrl !== '#' ? '_blank' : undefined}
+                    rel="noreferrer"
+                    onClick={(e) => {
+                      if (enderecos.length === 0) {
+                        e.preventDefault();
+                        alert("Nenhum dos clientes agendados possui um endereço cadastrado no sistema.");
+                      }
+                    }}
+                    style={{
+                      background: 'var(--color-primary)',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                      textDecoration: 'none'
+                    }}
+                    title="Abre o Google Maps com a rota passando por todos os clientes do dia."
+                  >
+                    <MapPin size={18} />
+                    Traçar Rota Completa
+                  </a>
+                );
+              })()}
             </div>
 
             {visitasDoDia.length === 0 ? (
@@ -249,13 +257,16 @@ export default function DashboardHome() {
                         {v.cliente?.endereco ? v.cliente.endereco : '⚠️ Endereço não cadastrado!'}
                       </p>
                     </div>
-                    <button 
-                      onClick={() => openGoogleMaps(v.cliente)}
-                      style={{ background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-primary)', flexShrink: 0, marginLeft: '1rem' }}
+                    <a 
+                      href={getGoogleMapsUrl(v.cliente)}
+                      target={v.cliente?.endereco ? '_blank' : undefined}
+                      rel="noreferrer"
+                      onClick={(e) => handleGoogleMapsClick(e, v.cliente)}
+                      style={{ background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-primary)', flexShrink: 0, marginLeft: '1rem', textDecoration: 'none' }}
                       title="Abrir no Maps"
                     >
                       <MapPin size={20} />
-                    </button>
+                    </a>
                   </div>
                 ))}
               </div>
