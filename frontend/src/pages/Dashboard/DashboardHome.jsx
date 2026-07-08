@@ -32,9 +32,8 @@ export default function DashboardHome() {
   const [visitasDoDia, setVisitasDoDia] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
+  const fetchMetrics = async () => {
+    try {
         if (isTecnico) {
           // Técnico: Busca apenas visitas
           const resVisitas = await api.get('/api/visitas/');
@@ -54,11 +53,11 @@ export default function DashboardHome() {
             isHoje(v.data_agendada) && v.status === 'concluida'
           );
 
-          setMetrics({
-            ...metrics,
+          setMetrics(prev => ({
+            ...prev,
             visitasHoje: agendadasHoje.length,
             concluidasHoje: concluidasHoje.length
-          });
+          }));
           
           // Ordena as do dia pela hora
           const doDia = agendadasHoje.sort((a, b) => new Date(a.data_agendada) - new Date(b.data_agendada));
@@ -143,7 +142,22 @@ export default function DashboardHome() {
     };
 
     fetchMetrics();
+  }, [isTecnico]); // Removido fetchMetrics daqui e executado direto. O React vai usar o hook normal.
+
+  useEffect(() => {
+    fetchMetrics();
   }, [isTecnico]);
+
+  const handleStatusChange = async (visitaId, novoStatus) => {
+    try {
+      await api.patch(`/api/visitas/${visitaId}`, { status: novoStatus });
+      alert(`Status atualizado para: ${novoStatus.replace('_', ' ')}`);
+      fetchMetrics();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao atualizar o status da OS.");
+    }
+  };
 
   const handleGoogleMapsClick = (e, cliente) => {
     if (!cliente?.endereco) {
@@ -263,6 +277,30 @@ export default function DashboardHome() {
                       <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: !v.cliente?.endereco ? 'var(--color-error)' : 'inherit' }}>
                         {v.cliente?.endereco ? v.cliente.endereco : '⚠️ Endereço não cadastrado!'}
                       </p>
+                      
+                      {/* Dropdown de Status */}
+                      <div style={{ marginTop: '1rem' }}>
+                        <select 
+                          value={v.status} 
+                          onChange={(e) => handleStatusChange(v.id, e.target.value)}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid var(--color-border)',
+                            backgroundColor: 'var(--color-background)',
+                            color: 'var(--color-text-main)',
+                            fontSize: '0.85rem',
+                            cursor: 'pointer',
+                            fontWeight: '500'
+                          }}
+                        >
+                          <option value="agendada">📅 Agendada</option>
+                          <option value="em_andamento">🚐 Em Deslocamento / Andamento</option>
+                          <option value="concluida">✅ Serviço Concluído</option>
+                          <option value="cancelada">❌ Cancelada</option>
+                        </select>
+                      </div>
+
                     </div>
                     <a 
                       href={getGoogleMapsUrl(v.cliente)}
